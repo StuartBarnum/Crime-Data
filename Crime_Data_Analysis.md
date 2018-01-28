@@ -75,12 +75,12 @@ calculate_conditional_distribution <- function(column) {
   return(return_list)
   }
 assessment <- calculate_conditional_distribution(Zone.Beat)
-#df <- assessment[[1]]
+df <- assessment[[1]]
 plot <- assessment[[2]]
 plot
 ```
 
-![](Crime_Data_Analysis_files/figure-markdown_github/unnamed-chunk-1-1.png)
+![](Crime_Data_Analysis_files/figure-markdown_github/unnamed-chunk-2-1.png)
 
 ``` r
 #interactive_plot <- 
