@@ -3,6 +3,7 @@ title: "Crime Data Analysis"
 author: "Stuart Barnum"
 date: "1/28/2018"
 output: github_document
+always_allow_html: yes
 ---
 
 Initial test of Plotly graphics on GitHub
@@ -80,10 +81,10 @@ assessment <- calculate_conditional_distribution(Zone.Beat)
 df <- assessment[[1]]
 plot <- assessment[[2]]
 plot
-#interactive_plot <- 
-#  ggplotly(plot)
-#interactive_plot %>% 
-#  layout(margin = list(b=50, l=60, t=80)) 
+interactive_plot <- 
+  ggplotly(plot)
+interactive_plot %>% 
+  layout(margin = list(b=50, l=60, t=80)) 
 
 ```
 
