@@ -11,8 +11,8 @@ Initial test of Plotly graphics on GitHub
 ```{r}
 library(tidyverse)
 library(plotly)
-sanfrancisco <- read.csv("sanfrancisco_incidents_summer_2014.csv")
-seattle <- read.csv("seattle_incidents_summer_2014.csv")
+#sanfrancisco <- read.csv("sanfrancisco_incidents_summer_2014.csv")
+#seattle <- read.csv("seattle_incidents_summer_2014.csv")
 zero_assess <- seattle %>%
   mutate(LatEqualsZero = Latitude == 0) %>%
   group_by(LatEqualsZero, Summarized.Offense.Description) %>%
@@ -86,7 +86,6 @@ interactive_plot <-
 interactive_plot %>% 
   layout(margin = list(b=50, l=60, t=80)) 
 
-rm(seatte, sanfrancisco)
 ```
 
 
