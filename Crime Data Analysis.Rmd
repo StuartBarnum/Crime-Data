@@ -2,8 +2,8 @@
 title: "Crime Data Analysis"
 author: "Stuart Barnum"
 date: "1/28/2018"
-output: github_document
-always_allow_html: yes
+output: html_document
+
 ---
 
 Initial test of Plotly graphics on GitHub
@@ -86,6 +86,7 @@ interactive_plot <-
 interactive_plot %>% 
   layout(margin = list(b=50, l=60, t=80)) 
 
+rm(seatte, sanfrancisco)
 ```
 
 
