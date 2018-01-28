@@ -2,7 +2,7 @@
 title: "Crime Data Analysis"
 author: "Stuart Barnum"
 date: "1/28/2018"
-output: html_document
+output: github_document
 ---
 
 Initial test of Plotly graphics on GitHub

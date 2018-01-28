@@ -7,7 +7,39 @@ Initial test of Plotly graphics on GitHub
 
 ``` r
 library(tidyverse)
+```
+
+    ## ── Attaching packages ──────────────────────────────────────────────────────────────── tidyverse 1.2.1 ──
+
+    ## ✔ ggplot2 2.2.1.9000     ✔ purrr   0.2.4     
+    ## ✔ tibble  1.4.2          ✔ dplyr   0.7.4     
+    ## ✔ tidyr   0.7.2          ✔ stringr 1.2.0     
+    ## ✔ readr   1.1.1          ✔ forcats 0.2.0
+
+    ## ── Conflicts ─────────────────────────────────────────────────────────────────── tidyverse_conflicts() ──
+    ## ✖ dplyr::filter() masks stats::filter()
+    ## ✖ dplyr::lag()    masks stats::lag()
+
+``` r
 library(plotly)
+```
+
+    ## 
+    ## Attaching package: 'plotly'
+
+    ## The following object is masked from 'package:ggplot2':
+    ## 
+    ##     last_plot
+
+    ## The following object is masked from 'package:stats':
+    ## 
+    ##     filter
+
+    ## The following object is masked from 'package:graphics':
+    ## 
+    ##     layout
+
+``` r
 sanfrancisco <- read.csv("sanfrancisco_incidents_summer_2014.csv")
 seattle <- read.csv("seattle_incidents_summer_2014.csv")
 zero_assess <- seattle %>%
@@ -80,7 +112,7 @@ plot <- assessment[[2]]
 plot
 ```
 
-![](Crime_Data_Analysis_files/figure-markdown_github/unnamed-chunk-2-1.png)
+![](Crime_Data_Analysis_files/figure-markdown_github/unnamed-chunk-1-1.png)
 
 ``` r
 #interactive_plot <- 
