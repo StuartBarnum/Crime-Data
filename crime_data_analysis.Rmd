@@ -94,7 +94,7 @@ kable(results[["df"]] %>% filter(m == n))
 
 ```
 
-Although a chi-squared test may be useful here, what we have so far suggests at least a weak systematic relationship between missingness and the particular crime reported in an instance. Perhaps prostitution was  recorded with somewhat greater meticulousness? Although we can't infer that this is the case, the data contains a suggestion that it might be.
+Although a chi-squared test may be useful here, what we have so far suggests at least a weak systematic relationship between missingness and the particular crime reported in certain instances. Perhaps prostitution was recorded with somewhat greater meticulousness? Although we can't infer that this is the case, the data contains a suggestion that it might be.
 
 We now turn to the relationship betwen district sector and missingness.
 
