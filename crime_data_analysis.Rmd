@@ -6,7 +6,7 @@ output: html_document
 
 ---
 
-The dataset for crime in Seattle in 2015 contains more than 2000 instances with missing coordinate data (latitude and longitude). As an aid in investigating whether there is a systematic relationship between missingness of this data and other variables in the dataset, I constructed various interactive plots, based on a data frame of tallies constructed with dplyr.
+The dataset for crime in Seattle in 2015 contains 2050 instances in which the location coordinates are recorded as zero (e.g. latitude and longitude of zero). As this location would be in the Atlantic Ocean, I will treat these instances as having missing coordinate information. Because I will be using the coordinate data to plot recorded instances of crime on a Seattle map and thus obtain an idea as to the distributions of certain types of crimes accross the city, careful examination of these missing data is warranted. It may also reflect differences in the mannner in which crime is recorded. Does this vary with respect to police district or the particular type of crime?
 
 ```{r}
 library(tidyverse)
@@ -93,6 +93,13 @@ library(knitr)
 kable(results[["df"]] %>% filter(m == n))
 
 ```
+
+
+```{r}
+
+```
+
+
 
 Although a chi-squared test may be useful here, what we have so far suggests at least a weak systematic relationship between missingness and the particular crime reported in certain instances. Perhaps prostitution was recorded with somewhat greater meticulousness? Although we can't infer that this is the case, the data contains a suggestion that it might be.
 
