@@ -98,5 +98,38 @@ results <- calculate_conditional_distribution(District.Sector)
 results[["plotly"]]
 ```
 
+The mostly-red bar at the left end corresonds to data for which no district sector is indicated in the data, for which it would not be surprising that the coordinate data is also missing. Other than, maybe, the mysterious District Sector 99--with a total of only 40 reported instances--the data suggests that the reporting of examples was consistent accross the sectors.
 
+Similar considerations apply to the possible relationship between missingness and Zone Beat.
 
+```{r}
+results <- calculate_conditional_distribution(Zone.Beat)
+results[["plotly"]]
+```
+
+In this case, minor differences in the conditional distributions are evident, but likely not significant. (I may conduct a Chi Squared test of this assumption.) We may thus reasonably suppose that a plot of the crime data on a map of the city would not distort the distribution of actual recorded crime across Seattle. Thus plotting all of the instantances that have position data (latitude and longitude) in the table, we obtain the following.
+
+```{r}
+library(ggmap)
+seattle_gg <- get_map("Seattle", maptype = "toner-lite",
+                      zoom = 11)
+
+#Violent_Crimes <- c("ASSAULT", "HOMICIDE", "ROBBERY")
+
+#remove zero latitude and longitude elements, for mapping
+seattle_nonzero <- seattle %>%
+  filter(Latitude != 0 & Longitude != 0)
+
+#data <- seattle_nonzero %>%
+#  filter(is.element(Summarized.Offense.Description, Violent_Crimes))
+
+#data <- seattle_nonzero %>% 
+#  filter(Summarized.Offense.Description == "NARCOTICS")
+
+ggmap(seattle_gg, darken = c(.01, "black")) + 
+  geom_bin2d(data = seattle_nonzero, 
+             aes(x = Longitude, y = Latitude), 
+             bins = 200) +
+  scale_fill_gradient(trans = "log10")
+
+```
