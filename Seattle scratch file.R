@@ -75,7 +75,7 @@ calculate_conditional_distribution <- function(column) {
     ungroup() %>%
     group_by(!!column) 
     
-  #initialize list of items to be returned
+  #initialize list of items to be returned (a d.f. and a ggplot)
   return_list <- list()
   return_list[["df"]] <- zero_assess
   
@@ -111,32 +111,12 @@ interactive_plot <-
 interactive_plot %>% 
   layout(margin = list(b=50, l=60, t=80)) 
   
-    add_trace(y = ~TRUE, name = 'Tree 2') %>%
-    add_trace(y = ~FALSE, name = 'Tree 2')
-       
-
-      #legend=dict(orientation="h"))
-      #legend = list(x = 100, y = 0.5))
+    
   
 plot
-#note prostitution always has a label
+#note that prostitution always has a label
 
-ggplot(df[[1]]) +
-  geom_col(aes(x = Summarized.Offense.Description, 
-               y = conditional_distribution, fill = LatEqualsZero)) +
-  labs(x = "fasd", y = "conditional distribution",
-       fill = "position\ndata\nmissing") 
 
-+
-  guides(fill = guide_legend(nrow = 3))
-
-fred <- zero_assess %>% filter(LatEqualsZero == TRUE)
-mutate(sum_sample = sum(m)) #%>%
-  
-  
-  group_by(Latitude != 0) %>%
-  mutate
-  
 
   
 

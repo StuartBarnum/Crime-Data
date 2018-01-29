@@ -6,7 +6,7 @@ output: html_document
 
 ---
 
-The dataset for crime in Seattle in 2014 contains more than 2000 instances with missing coordinate data (latitude and longitude). As an aid in investigating whether there is a systematic relationship between missingness of this data and other variables in the dataset, I constructed various interactive plots.
+The dataset for crime in Seattle in 2015 contains more than 2000 instances with missing coordinate data (latitude and longitude). As an aid in investigating whether there is a systematic relationship between missingness of this data and other variables in the dataset, I constructed various interactive plots, based on a data frame of tallies constructed with dplyr.
 
 ```{r}
 library(tidyverse)
@@ -15,7 +15,8 @@ sanfrancisco <- read.csv("sanfrancisco_incidents_summer_2014.csv")
 seattle <- read.csv("seattle_incidents_summer_2014.csv")
 
 #To avoid repetition of code in the generation various conditional distributions, I 
-#constructed a function.
+#defined a function that produces both the dataframes with the tallies and the interactive plots for 
+#examining the possible relations between missingness and other factors.
 
 calculate_conditional_distribution <- function(column) {
   column <- enquo(column)
@@ -85,7 +86,11 @@ Are there other types of crime for which this is the case? Let's see.
 
 #A simple manipulation of the data derived in calculate_conditional_distribution suffices.
 results <- calculate_conditional_distribution(Summarized.Offense.Description)
-results[["df"]] %>% filter(m == n)
+
+
+library(knitr)
+
+kable(results[["df"]] %>% filter(m == n))
 
 ```
 
@@ -111,25 +116,57 @@ In this case, minor differences in the conditional distributions are evident, bu
 
 ```{r}
 library(ggmap)
+
+#obtain a suitable Seattle map
 seattle_gg <- get_map("Seattle", maptype = "toner-lite",
                       zoom = 11)
-
-#Violent_Crimes <- c("ASSAULT", "HOMICIDE", "ROBBERY")
 
 #remove zero latitude and longitude elements, for mapping
 seattle_nonzero <- seattle %>%
   filter(Latitude != 0 & Longitude != 0)
 
-#data <- seattle_nonzero %>%
-#  filter(is.element(Summarized.Offense.Description, Violent_Crimes))
-
-#data <- seattle_nonzero %>% 
-#  filter(Summarized.Offense.Description == "NARCOTICS")
-
-ggmap(seattle_gg, darken = c(.01, "black")) + 
+#show the distribution of recorded reports of crime on the map, using a logarithmic scale to enhance 
+#the contrast
+plot <- ggmap(seattle_gg, darken = c(.01, "black")) + 
   geom_bin2d(data = seattle_nonzero, 
              aes(x = Longitude, y = Latitude), 
              bins = 200) +
   scale_fill_gradient(trans = "log10")
 
+plot
+
 ```
+Now focuss on violent crimes, with these defined as crimes with "Summarized Offense Description" of Assault, Homicide, or Robbery.
+
+
+```{r}
+library(ggmap)
+
+Violent_Crimes <- c("ASSAULT", "HOMICIDE", "ROBBERY")
+
+data <- seattle_nonzero %>%
+  filter(is.element(Summarized.Offense.Description, Violent_Crimes))
+
+ggmap(seattle_gg, darken = c(.01, "black")) + 
+  geom_bin2d(data = data, 
+             aes(x = Longitude, y = Latitude), 
+             bins = 200) +
+  scale_fill_gradient(trans = "log10")
+
+
+```
+
+And drugs:
+
+```{r}
+data <- seattle_nonzero %>% 
+  filter(Summarized.Offense.Description == "NARCOTICS")
+
+ggmap(seattle_gg, darken = c(.01, "black")) + 
+  geom_bin2d(data = data, 
+             aes(x = Longitude, y = Latitude), 
+             bins = 200) +
+  scale_fill_gradient(trans = "log10")
+```
+
+
