@@ -71,14 +71,14 @@ calculate_conditional_distribution <- function(column) {
 
 ```
 
-We may thus find the distributions of certain general categories of crime, specfied by a "summarized offense description", conditional on both missingness of and non-missingness.
+We thus find the distributions of certain general categories of crime, as indicated by the variable Summarized.Offense.Description in the data, conditional on both missingness of and non-missingness. If missingness is simply random---in this case, not associated with the type of crime reflected in the "summarized offense description"---we would expect these two conditional distributions to look roughly the same.
 
 ```{r}
 results <- calculate_conditional_distribution(Summarized.Offense.Description)
 results[["plotly"]]
 ```
 
-Overserving that the heights of the red and green portions are roughly the same in most of the cases, we find little evidence of a systematic relationship between missingness of coordinate data and the particular type of reported crime. However, moving the cursor over the bars, we see that prostitution is a notable exception, with perhaps all of the cases recorded with coordinate data. Examination of the data frame generated with the above code shows that there were 202 cases of prostition during the year (from 12/29/2014 through 1/2/2015), and indeed that all of the recorded cases had coordinate data. 
+In the above, for the types of crimes with large numbers of instances, the lengths of the each of the red bars is roughly equal to the length of the green bar below it. We thus find little evidence of a systematic relationship between missingness of coordinate data and the particular type of reported crime. However, moving the cursor over the bars, we see that prostitution may appear a notable exception, with perhaps all of the cases recorded with coordinate data. Examination of the data frame generated with the above code shows that there were 202 cases of prostition during the year (from 12/29/2014 through 1/2/2015), and indeed that all of the recorded cases had coordinate data. 
 
 Are there other types of crime for which this is the case? Let's see.
 
@@ -99,9 +99,7 @@ kable(results[["df"]] %>% filter(m == n))
 
 ```
 
-
-
-Although a chi-squared test may be useful here, what we have so far suggests at least a weak systematic relationship between missingness and the particular crime reported in certain instances. Perhaps prostitution was recorded with somewhat greater meticulousness? Although we can't infer that this is the case, the data contains a suggestion that it might be.
+The dataset includes, again, 2050 examples with missing coordinate information, out of 32779 instances in the dataset---roughly 6.3 percent of the data. Given such an overall random distribution, one would expect that, for some of the categories with very few instances in the dataset, all of the instances of reported crimes within the category are recorded with position data. However, given that prostitution has as many as 202 recorded instances, all recorded with postion information, there may be a systematic relationship between this value of Summarized.Offense.Description and missingness. For example, although we can't infer that this would be the case (a chi squared test may be useful here) perhaps record-keeping in the case of prostitution is more carefully handed than it is in the case of most other offenses.
 
 We now turn to the relationship betwen district sector and missingness.
 
