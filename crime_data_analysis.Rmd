@@ -6,33 +6,17 @@ output: html_document
 
 ---
 
-Initial test of Plotly graphics on GitHub
+The dataset for crime in Seattle in 2014 contains more than 2000 instances with missing coordinate data (latitude and longitude). As an aid in investigating whether there is a systematic relationship between missingness of this data and other variables in the dataset, I constructed various interactive plots.
 
 ```{r}
 library(tidyverse)
 library(plotly)
-#sanfrancisco <- read.csv("sanfrancisco_incidents_summer_2014.csv")
-#seattle <- read.csv("seattle_incidents_summer_2014.csv")
-zero_assess <- seattle %>%
-  mutate(LatEqualsZero = Latitude == 0) %>%
-  group_by(LatEqualsZero, Summarized.Offense.Description) %>%
-  summarize(m = n()) %>%
-  group_by(Summarized.Offense.Description) %>%
-  mutate(n = sum(m)) %>%
-  ungroup() %>%
-  mutate(sum_total = sum(m)) %>%
-  group_by(LatEqualsZero) %>%
-  mutate(sum_zero_test = sum(m)) %>%
-  mutate(total_dist = n / sum_total) %>%
-  mutate(marginal_distribution = m / sum_zero_test)
-#result: visual comparision of total_dist and marginal_dist does not
-#suggest a systematic relationship between omision and non-omision
-#of the longitudinal and latitudinal data.
+sanfrancisco <- read.csv("sanfrancisco_incidents_summer_2014.csv")
+seattle <- read.csv("seattle_incidents_summer_2014.csv")
 
-#Wrap the above into a function, to more quickly examine possible dependencies 
-#with respect to other columns. use equo() and !! to handle the passing of the 
-#column name into the. Note that the d.f. seattle needs to be present in the 
-#environment
+#To avoid repetition of code in the generation various conditional distributions, I 
+#constructed a function.
+
 calculate_conditional_distribution <- function(column) {
   column <- enquo(column)
   zero_assess <- seattle %>%
@@ -65,26 +49,54 @@ calculate_conditional_distribution <- function(column) {
                   fill = ~Position_Data_Missing)) +
     labs(x = str_c(quo_name(column), 
                    "\n(move cursor over bars to see the categories)"), 
-         y = "conditional distribution",
-         fill = "position data") +
+         y = "conditional distribution") +
     ggtitle("Assessing the Effect of Missingness of Position Data") +
     theme(plot.title = element_text(hjust = 0.5),
           plot.subtitle = element_text(hjust = 0.5),
-          axis.text.x = element_blank()) +
+          axis.text.x = element_blank(),
+          legend.title = element_blank()) +
     guides(fill = guide_legend(reverse=TRUE))
     
-  return_list[["plot"]] <- plot 
+  return_list[["ggplot"]] <- plot 
   
+  interactive_plot <- 
+    ggplotly(plot) %>%
+    layout(margin = list(b = 50, l = 60, r = 10, t = 80))
+  
+  return_list[["plotly"]] <- interactive_plot
+
   return(return_list)
   }
-assessment <- calculate_conditional_distribution(Zone.Beat)
-df <- assessment[[1]]
-plot <- assessment[[2]]
-interactive_plot <- 
-  ggplotly(plot)
-interactive_plot %>% 
-  layout(margin = list(b=50, l=60, t=80)) 
 
 ```
+
+We may thus find the distributions of certain general categories of crime, specfied by a "summarized offense description", conditional on both missingness of and non-missingness.
+
+```{r}
+results <- calculate_conditional_distribution(Summarized.Offense.Description)
+results[["plotly"]]
+```
+
+Overserving that the heights of the red and green portions are roughly the same in most of the cases, we find little evidence of a systematic relationship between missingness of coordinate data and the particular type of reported crime. However, moving the cursor over the bars, we see that prostitution is a notable exception, with perhaps all of the cases recorded with coordinate data. Examination of the data frame generated with the above code shows that there were 202 cases of prostition during the year (from 12/29/2014 through 1/2/2015), and indeed that all of the recorded cases had coordinate data. 
+
+Are there other types of crime for which this is the case? Let's see.
+
+```{r}
+
+#A simple manipulation of the data derived in calculate_conditional_distribution suffices.
+results <- calculate_conditional_distribution(Summarized.Offense.Description)
+results[["df"]] %>% filter(m == n)
+
+```
+
+Although a chi-squared test may be useful here, what we have so far suggests at least a weak systematic relationship between missingness and the particular crime reported in an instance. Perhaps prostitution was  recorded with somewhat greater meticulousness? Although we can't infer that this is the case, the data contains a suggestion that it might be.
+
+We now turn to the relationship betwen district sector and missingness.
+
+```{r}
+results <- calculate_conditional_distribution(District.Sector)
+results[["plotly"]]
+```
+
 
 
