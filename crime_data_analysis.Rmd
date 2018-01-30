@@ -182,9 +182,27 @@ ggmap(seattle_gg, darken = c(.01, "black")) +
   theme(plot.title = element_text(hjust = 0.5))
 ```
 
-Given that the population of Seattle in 2014 was 668,000, the number of recorded cases of drug crimes seems strikingly low. (Including the cases for which coordinate data is missing, the number of recorded cases is 391.) With this in mind, compare the results with the equivalent results for San Fransisco.
+Given that the population of Seattle in 2014 was 668,000, the number of recorded cases of drug crimes seems strikingly low. (Including the cases for which coordinate data is missing, the number of recorded cases is 391.) With this in mind, compare the results with the equivalent results for San Fransisco for the summer of 2014. None of instances of the San Fransisco crime dataset for June of 2014 through July of 2015 have missing coordinate data. We thus simply proceed to a map.
 
 ```{r}
-fred <- calculate_conditional_distribution(Summarized.Offense.Description)[[1]]
+X_center <- (range(sanfrancisco$X)[2] + range(sanfrancisco$X)[1]) / 2
+Y_center <- (range(sanfrancisco$Y)[2] + range(sanfrancisco$Y)[1]) / 2
+sf_gg <- get_map(location = c(X_center, Y_center), 
+                 zoom = 12, maptype = "toner-lite")
+data <- filter(sanfrancisco, Category == "DRUG/NARCOTIC")
+ggmap(sf_gg, darken = c(.01, "black")) + 
+  geom_bin2d(data = data, aes(x = X, y = Y), bins = 200) +
+  scale_fill_gradient(trans = "log10") +
+  ggtitle ("Drug crime in San Francisco: Summer of 2014 (n = 1,345)") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
+
+This is roughly 3.4 times the number of instances in Seattle, for a population that is only roughly 1.3 times greater. It is doubtful that drug use would be as much as 2.6 percent greater in one of the cities than in the other. We may thus find a suggestion that enforcement of drug laws in San Francisco is somewhat stricter than in Seattle.
+
+
+
+
+
+
+
 
