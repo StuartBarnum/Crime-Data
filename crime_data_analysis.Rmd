@@ -6,7 +6,7 @@ output: html_document
 
 ---
 
-The dataset for crime in Seattle in 2015 contains 2050 instances in which the location coordinates are recorded as zero (e.g. latitude and longitude of zero). As this location would be in the Atlantic Ocean, I will treat these instances as having missing coordinate information. Because I will be using the coordinate data to plot recorded instances of crime on a Seattle map and thus obtain an idea as to the distributions of certain types of crimes accross the city, careful examination of these missing data is warranted. It may also reflect differences in the mannner in which crime is recorded. Does this vary with respect to police district or the particular type of crime?
+The dataset for crime in Seattle for the summer of 2014---June, July, and August---contains 2050 instances in which the location coordinates are recorded as zero (e.g. latitude and longitude of zero). As this location would be in the Atlantic Ocean, I will treat these instances as having missing coordinate information. Because I will be using the coordinate data to plot recorded instances of crime on a Seattle map and thus obtain an idea as to the distributions of certain types of crimes accross the city, careful examination of these missing data is warranted. It may also reflect differences in the mannner in which crime is recorded. Does this vary with respect to police district or the particular type of crime?
 
 ```{r}
 library(tidyverse)
@@ -78,7 +78,7 @@ results <- calculate_conditional_distribution(Summarized.Offense.Description)
 results[["plotly"]]
 ```
 
-In the above, for the types of crimes with large numbers of instances, the lengths of the each of the red bars is roughly equal to the length of the green bar below it. We thus find little evidence of a systematic relationship between missingness of coordinate data and the particular type of reported crime. However, moving the cursor over the bars, we see that prostitution may appear a notable exception, with perhaps all of the cases recorded with coordinate data. Examination of the data frame generated with the above code shows that there were 202 cases of prostition during the year (from 12/29/2014 through 1/2/2015), and indeed that all of the recorded cases had coordinate data. 
+In the above, for the types of crimes with large numbers of instances, the length of the each of the red bars is roughly equal to the length of the green bar below it. We thus find little evidence of a systematic relationship between missingness of coordinate data and the particular type of reported crime. However, moving the cursor over the bars, we see that prostitution may appear to be a notable exception, with perhaps all of the cases recorded with coordinate data. Examination of the data frame generated with the above code shows that there were 202 cases of prostition during the three months from June through August of 2014, and indeed that all of the recorded cases had coordinate data. 
 
 Are there other types of crime for which this is the case? Let's see.
 
@@ -99,16 +99,18 @@ kable(results[["df"]] %>% filter(m == n))
 
 ```
 
-The dataset includes, again, 2050 examples with missing coordinate information, out of 32779 instances in the dataset---roughly 6.3 percent of the data. Given such an overall random distribution of missingness, one would expect that, for some of the categories with very few instances in the dataset, all of the instances of reported crimes within the category have been recorded with position data. However, given that prostitution has as many as 202 recorded instances, all recorded with postion information, there may be a systematic relationship between this value of Summarized.Offense.Description and missingness. For example, perhaps record-keeping in the case of prostitution was more carefully handled than it was in the cases of most other offenses. Although we can't infer that this is the case---a chi squared test may be somewhat useful here---the data suggest that it might be.
+The dataset includes, again, 2050 examples with missing coordinate information, out of a total of 32779 instances---roughly 6.3 percent of the dataset. Given such an overall random distribution of missingness, one would expect that, for some of the categories with very few instances, all of the instances of reported crimes within the category would have been recorded with position data. However, given that prostitution has as many as 202 recorded instances, all recorded with postion information, there may be a systematic relationship between this value of Summarized.Offense.Description and missingness. For example, perhaps record-keeping in the case of prostitution was more carefully handled than it was in the cases of most other offenses. Although we can't infer that this is the case---a chi squared test may be somewhat useful here---the data suggest that it might be.
 
-We now turn to the relationship betwen district sector and missingness.
+Before moving on to the next plot, note that, as one might expect, most of reported crimes were property crimes--for example, burglary and vehicle theft. One striking aspect, however, is the prevalence of the crime classified as "carprowl," which amounts to almost 20 percent of the reported criminal activity. As may be confimred with a quick Internet search, this crime, as identified by this term, has been of particular concern in Seattle.
+
+We now turn to the relationship betwen district sector and missingness of position data.
 
 ```{r}
 results <- calculate_conditional_distribution(District.Sector)
 results[["plotly"]]
 ```
 
-The mostly-red bar at the left end corresonds to data for which no district sector is indicated in the data, for which it would not be surprising that the coordinate data is also missing. Other than, maybe, the mysterious District Sector 99--with a total of only 40 reported instances--the data suggests that the reporting of examples was consistent accross the sectors.
+The mostly-red bar at the left end corresonds to data for which no district sector is indicated in the data, for which it would not be surprising that the coordinate data is also missing. Other than, maybe, the mysterious District Sector 99--with a total of only 40 reported instances--the data suggests that the recording of position data was consistent accross the sectors.
 
 Similar considerations apply to the possible relationship between missingness and Zone Beat.
 
@@ -136,12 +138,14 @@ plot <- ggmap(seattle_gg, darken = c(.01, "black")) +
   geom_bin2d(data = seattle_nonzero, 
              aes(x = Longitude, y = Latitude), 
              bins = 200) +
-  scale_fill_gradient(trans = "log10")
+  scale_fill_gradient(trans = "log10") +
+  ggtitle ("Total recorded crime in Seattle: Summer of 2014 (n = 30,729)") +
+  theme(plot.title = element_text(hjust = 0.5))
 
 plot
 
 ```
-Now focuss on violent crimes, with these defined as crimes with "Summarized Offense Description" of Assault, Homicide, or Robbery.
+Now focus on violent crimes, with these defined as crimes with "Summarized Offense Description" of Assault, Homicide, or Robbery.
 
 
 ```{r}
@@ -156,7 +160,9 @@ ggmap(seattle_gg, darken = c(.01, "black")) +
   geom_bin2d(data = data, 
              aes(x = Longitude, y = Latitude), 
              bins = 200) +
-  scale_fill_gradient(trans = "log10")
+  scale_fill_gradient(trans = "log10") +
+  ggtitle ("Violent crime in Seattle: Summer of 2014 (n = 2,601)") +
+  theme(plot.title = element_text(hjust = 0.5))
 
 
 ```
@@ -171,7 +177,14 @@ ggmap(seattle_gg, darken = c(.01, "black")) +
   geom_bin2d(data = data, 
              aes(x = Longitude, y = Latitude), 
              bins = 200) +
-  scale_fill_gradient(trans = "log10")
+  scale_fill_gradient(trans = "log10") +
+  ggtitle ("Drug crime in Seattle: Summer of 2014 (n = 367)") +
+  theme(plot.title = element_text(hjust = 0.5))
 ```
 
+Given that the population of Seattle in 2014 was 668,000, the number of recorded cases of drug crimes seems strikingly low. (Including the cases for which coordinate data is missing, the number of recorded cases is 391.) With this in mind, compare the results with the equivalent results for San Fransisco.
+
+```{r}
+fred <- calculate_conditional_distribution(Summarized.Offense.Description)[[1]]
+```
 
