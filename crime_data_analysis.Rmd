@@ -199,6 +199,15 @@ ggmap(sf_gg, darken = c(.01, "black")) +
 
 This is roughly 3.4 times the number of instances in Seattle, for a population that is only roughly 1.3 times greater. It is doubtful that drug use would be as much as 2.6 percent greater in one of the cities than in the other. We may thus find a suggestion that enforcement of drug laws in San Francisco is somewhat stricter than in Seattle.
 
+seattle DUI, sf DRIVING UNDER THE INFLUENCE
+both PROSTITUTION 
+seattle NARCOTICS, sf DRUG/NARCOTIC
+seattle WEAPON, sf WEAPON LAWS
+seattle LIQUOR VIOLATION, sf LIQUOR LAWS
+both ASSAULT
+both HOMICIDE
+both ROBBERY
+
 
 
 
