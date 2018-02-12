@@ -44,6 +44,7 @@ seattle_complete <- seattle_complete %>%
 SF_complete <- SF_complete %>%
   mutate(R_date = mdy(Date, tz = "PST8PDT"))
 
+
 seattle_complete %>%
   filter(Category %in% 
         c("Prostitution",
