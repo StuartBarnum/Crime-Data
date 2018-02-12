@@ -62,7 +62,9 @@ seattle_complete %>%
   labs(fill = "Year")
 
 ```
-San Francisco has seen no such increase. Furthermore, there is no evidence of the massive crime wave that this data would suggest, if the increase were taken to reflect the actual increase in crime. For example, there are reports of increased heroin use, but nothing close to the more than 100 percent increase in use, from one year to the next, that the data on drug crime in Seattle might seem to suggest. Are there significant differences, between the cities, in the relative rates of trafficking in drugs and of mere possession? Let's look.
+San Francisco has seen no such increase. Furthermore, there is no evidence of the massive crime wave in Seattle that this data would suggest, if the increase were taken to reflect the actual increase in crime. For example, there are reports of recent increases of use of some drugs, particularly heroin, but nothing close to the more than 100 percent increase in use, from one year to the next, that the data on drug crime in Seattle might seem to suggest. 
+
+Looking somewhat deeper at the recorded cases of illegal drug use in the two cities, Let's look at the differences between crimes that would be considered trafficking and those that would be considered possession.
 
 
 ```{r, fig.height = 5, fig.width = 10}
