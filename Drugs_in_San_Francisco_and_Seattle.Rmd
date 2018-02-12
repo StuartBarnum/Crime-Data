@@ -132,6 +132,8 @@ ggplotly(plot) %>% layout(margin = list(b = 50, l = 60, r = 10, t = 80))
 ```
 
 
+
+
 ```{r, fig.height = 5, fig.width = 10}
 seattle_drugs_13_17 <- seattle_drugs_13_17 %>%
   mutate(`Drug Type` = ifelse(str_detect(`Offense Type`, "MARIJU"), "Marijuana",    #yes
