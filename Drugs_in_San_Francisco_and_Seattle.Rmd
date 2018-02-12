@@ -5,7 +5,7 @@ output: html_notebook
 date: 2/12/2018
 ---
 
-Examining the 2014 Seattle and San Francisco summer crime data, as reported by the police, I noticed that San Francisco, despite having a population less than 30 percent greater than the population of Seattle, had more than twice as many recorded cases of drug crime. Does this reflect a much greater rate of drug use in San Francisco than in Seattle, or, rather, perhaps a difference in the manner of enforcement of drug laws or the manner in which infractions are recorded? Digging somewhat deeper---examining the data from 2013 through 2017 and on the use of certain popular drugs---I uncovered some surprising trends and obtained some possible insight into these questions.
+Examining the 2014 Seattle and San Francisco summer crime data, as reported by the police, I noticed that San Francisco, despite having a population of less than 30 percent greater than the population of Seattle, had more than twice as many recorded cases of drug crime. Does this reflect a greater rate of use of certain drugs in San Francisco than in Seattle, or, rather, perhaps a difference in the manner of enforcement of drug laws or the manner in which reported infractions are recorded? Digging somewhat deeper---examining the data from 2013 through 2017 and on the use of certain popular drugs---I uncovered some striking trends and obtained some possible insight into these questions.
 
 Examining the Seattle crime data from 2013 through 2017, one of the first things I noticed was a dramatic increase in the number of incidences of crime reflected in the police data. As the following plot of incidences of crime within some selected categories shows, the fractional increase in incidences of crime in the data is roughly the same across the various categories of crime.
 
@@ -57,7 +57,7 @@ seattle_complete %>%
   filter(Year %in% 2013:2017) %>%
   ggplot(aes(x = Category, fill = as.factor(Year))) +
   geom_bar(position = "dodge") +
-  ggtitle("Cases of Selected Categories of Crime, as per Official Data") +
+  ggtitle("Recorded Cases of Selected Categories of Crime: Seattle") +
   theme(plot.title = element_text(hjust = 0.5)) +
   labs(fill = "Year")
 
