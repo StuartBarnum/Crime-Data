@@ -1,8 +1,12 @@
 ---
-title: "Drugs and the Police: San Francisco and Seattle"
+title: 'Drugs and the Police: San Francisco and Seattle'
 author: "Stuart Barnum"
-output: html_notebook
-date: 2/12/2018
+date: "2/12/2018"
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
 ---
 
 Examining the 2014 Seattle and San Francisco summer crime data, as reported by the police, I noticed that San Francisco, despite having a population of less than 30 percent greater than the population of Seattle, had more than twice as many recorded cases of drug crime. Does this reflect a greater rate of use of certain drugs in San Francisco than in Seattle, or, rather, perhaps a difference in the manner of enforcement of drug laws or the manner in which reported infractions are recorded? Digging somewhat deeper---examining the data from 2013 through 2017 and on the use of certain popular drugs---I uncovered some striking trends and obtained some possible insight into these questions.
@@ -13,11 +17,17 @@ Examining the Seattle crime data from 2013 through 2017, one of the first things
 library(tidyverse)
 library(plotly)
 library(lubridate)
+```
 
+```{r, cache = TRUE}
 SF_complete <- read_csv("SF_Complete.csv")
 seattle_complete <- read_csv("seattle_complete.csv", guess_max = 100000)
 #With guess max large enough, columns that contain integers that exceed the 
 #32-bit maximum are read as character vectors.
+
+```
+
+```{r}
 
 SF_complete <- SF_complete %>%
   mutate(Year = as.integer(str_sub(Date, -4, -1))) %>%
@@ -167,10 +177,10 @@ SF_drugs_13_17 <- SF_drugs_13_17 %>%
                             "Other")
                             ))))))))))))
 
-ggplot(SF_drugs_13_17) +
-  geom_bar(aes(`Drug Type`)) +
-  labs(title = "San Francisco") +
-  theme(axis.text.x = element_text(angle = 75, hjust = 1, vjust = 1))
+#ggplot(SF_drugs_13_17) +
+#  geom_bar(aes(`Drug Type`)) +
+#  labs(title = "San Francisco") +
+#  theme(axis.text.x = element_text(angle = 75, hjust = 1, vjust = 1))
 
 seattle_selected_drugs <- seattle_drugs_13_17 %>%
   filter(`Drug Type` %in% c("Marijuana", "Cocaine", "Methamphetamine", "Heroin"))
@@ -178,15 +188,15 @@ seattle_selected_drugs <- seattle_drugs_13_17 %>%
 SF_selected_drugs <- SF_drugs_13_17 %>%
   filter(`Drug Type` %in% c("Marijuana", "Cocaine", "Methamphetamine", "Heroin"))
 
-ggplot(seattle_selected_drugs) +
-  geom_bar(aes(`Drug Type`)) +
-  labs(title = "Seattle") +
-  theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1))
+#ggplot(seattle_selected_drugs) +
+#  geom_bar(aes(`Drug Type`)) +
+#  labs(title = "Seattle") +
+#  theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1))
 
-ggplot(SF_selected_drugs) +
-  geom_bar(aes(`Drug Type`)) +
-  labs(title = "San Francisco") +
-  theme(axis.text.x = element_text(angle = 75, hjust = 1, vjust = 1))
+#ggplot(SF_selected_drugs) +
+#  geom_bar(aes(`Drug Type`)) +
+#  labs(title = "San Francisco") +
+#  theme(axis.text.x = element_text(angle = 75, hjust = 1, vjust = 1))
 
 joined_drug_counts <- (seattle_selected_drugs %>% count(Year, `Drug Type`)) %>%
   left_join((SF_selected_drugs %>% count(Year, `Drug Type`)), by = c("Year", "Drug Type"))
@@ -205,7 +215,7 @@ ggplotly(plt) %>% layout(margin = list(b = 50, l = 60, r = 10, t = 80))
 
 
 
-```{r, fig.height = 3, fig.width = 4}
+```{r, fig.height = 9, fig.width = 12}
 library(lubridate)
 library(gridExtra)
 
@@ -236,11 +246,11 @@ plt_seattle_selected_drugs <- ggplot(seattle_selected_drugs) +
        title = "Seattle Police Incidents Related to 4 Popular Drugs",
        color = "Drug: ") +
   theme(legend.position = "bottom",
-        plot.title = element_text(size = 9),
-        axis.title.y = element_text(size = 8),
-        axis.text.x = element_text(size = 6),
-        legend.text = element_text(size = 6),
-        legend.title = element_text(size = 8)) +
+        plot.title = element_text(size = 14),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10),
+        legend.text = element_text(size = 10),
+        legend.title = element_text(size = 12)) +
   guides(size = guide_legend(order = 2))
 
 plt_SF_selected_drugs <- ggplot(SF_selected_drugs) +
@@ -252,9 +262,9 @@ plt_SF_selected_drugs <- ggplot(SF_selected_drugs) +
   labs(y = "number per fortnight", x = "",
        title = "San Francisco Police Incidents Related to 4 Popular Drugs") +
   theme(legend.position = "none",
-        plot.title = element_text(size = 9),
-        axis.title.y = element_text(size = 8),
-        axis.text.x = element_text(size = 6))
+        plot.title = element_text(size = 14),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10))
 
 plt_seattle_all_13_17 <- seattle_complete %>% 
   filter(Year %in% 2013:2017) %>%
@@ -265,9 +275,9 @@ plt_seattle_all_13_17 <- seattle_complete %>%
   theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
   labs(y = "number per fortnight", x = "",
        title = "Seattle Police Incidents: 2013 through 2017") +
-  theme(plot.title = element_text(size = 9),
-        axis.title.y = element_text(size = 8),
-        axis.text.x = element_text(size = 6))
+  theme(plot.title = element_text(size = 14),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10))
 
 plt_SF_all_13_17 <- SF_complete %>%
   filter(Year %in% 2013:2017) %>%
@@ -278,9 +288,9 @@ plt_SF_all_13_17 <- SF_complete %>%
   theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
   labs(y = "number per fortnight", x = "",
        title = "San Francisco Police Incidents: 2013 through 2017") +
-  theme(plot.title = element_text(size = 9),
-        axis.title.y = element_text(size = 8),
-        axis.text.x = element_text(size = 6))
+  theme(plot.title = element_text(size = 14),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10))
 
 grid.arrange(plt_seattle_all_13_17, plt_SF_all_13_17, 
              plt_SF_selected_drugs, plt_seattle_selected_drugs,  
