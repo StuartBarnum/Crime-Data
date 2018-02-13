@@ -9,9 +9,9 @@ editor_options:
   chunk_output_type: inline
 ---
 
-Examining the 2014 Seattle and San Francisco summer crime data, as reported by the police, I noticed that San Francisco, despite having a population less than 30 percent greater than the population of Seattle, had more than twice as many recorded cases of drug crime. Does this reflect a greater rate of use of certain drugs in San Francisco than in Seattle, or, rather, perhaps a difference in the manner of enforcement of drug laws or the manner in which reported infractions are recorded? Digging somewhat deeper---examining the data from 2013 through 2017 and on the use of certain popular drugs---I uncovered some striking trends and obtained some possible insight into these questions.
+Examining the Seattle and San Francisco crime data for the summer of 2014, as reported by the cities, I noticed that San Francisco, despite having a population less than 30 percent greater than the population of Seattle, had more than twice as many recorded cases of drug crime. Does this reflect a greater rate of use of certain drugs in San Francisco than in Seattle, or, rather, perhaps a difference in the manner of enforcement of drug laws or the manner in which reported infractions are recorded? Digging somewhat deeper---examining the data from 2013 through 2017 and on the use of certain popular drugs---I uncovered some striking trends and obtained some possible insight into these questions.
 
-Examining the Seattle crime data from 2013 through 2017, one of the first things I noticed was a dramatic increase in the number of incidences of crime reflected in the police data. As the following plot of incidences of crime within some selected categories shows, the fractional increase in incidences of crime in the data is roughly the same across the various categories of crime.
+Thus examining the Seattle and San Francisco crime data from 2013 through 2017, one of the first things I noticed was a dramatic increase in the number of recorded incidents of crime. For example, in 2017, the number of reported cases of drug crime in Seattle were, in contrast to the numbers for 2014, greater than the number recorded cases of drug crime in San Francisco. As the following plot of incidents of crime within some selected categories suggests, the fractional increase in recorded incidents of crime in Seattle is roughly the same across the various categories of crime.
 
 The San Francisco dataset was downloaded on 2/7/2018, at:
 `https://data.sfgov.org/Public-Safety/Police-Department-Incidents-Current-Year-2017-/9v2m-8wqu`
@@ -79,7 +79,7 @@ seattle_complete %>%
 
 ```
 
-San Francisco has seen no such increase. Furthermore, there is no evidence of the massive crime wave in Seattle that this data would suggest, if the increase were taken to reflect the actual increase in crime. For example, there are reports of recent increases of use of some drugs, particularly heroin, but nothing close to the more than 100 percent increase in use, from one year to the next, that the data on drug crime in Seattle might seem to suggest. 
+San Francisco has seen no such increase in the number of recorded incidents. Furthermore, there is no evidence of the massive crime wave in Seattle that this data would suggest if the increase were taken to reflect the actual increase in crime. For example, there are reports of recent increases of use of some drugs, particularly heroin, but nothing close to the more than 100 percent increase in use, from one year to the next, that the data on drug crime in Seattle might seem to suggest. 
 
 Looking somewhat deeper at the recorded cases of illegal drug use in the two cities, let's consider the differences between crimes that would be considered trafficking and those that would be considered possession.
 
@@ -148,7 +148,7 @@ plot <- ggplot(joined_counts %>% filter(`Drug Offense Type` != "Other")) +
 ggplotly(plot) %>% layout(margin = list(b = 50, l = 60, r = 10, t = 80))
 ```
 
-
+We see that, unlike the Seattle data, the San Francisco data show a steady decrease in recorded drug-crime incidents from one year to the next. The recorded incidents for Seattle show similar fractional decreases from 2013 to 2014, but then, as with the data related to other categories of crime, begin to increase significantly after that. Let's look at the data for particular drugs, and consider it together with the totals for all of the recorded instances of crime.
 
 
 ```{r, fig.height = 5, fig.width = 10}
@@ -183,39 +183,6 @@ SF_drugs_13_17 <- SF_drugs_13_17 %>%
                             ifelse(str_detect(Descript, "HEROIN"), "Heroin",
                             "Other")
                             ))))))))))))
-
-#ggplot(SF_drugs_13_17) +
-#  geom_bar(aes(`Drug Type`)) +
-#  labs(title = "San Francisco") +
-#  theme(axis.text.x = element_text(angle = 75, hjust = 1, vjust = 1))
-
-seattle_selected_drugs <- seattle_drugs_13_17 %>%
-  filter(`Drug Type` %in% c("Marijuana", "Cocaine", "Methamphetamine", "Heroin"))
-
-SF_selected_drugs <- SF_drugs_13_17 %>%
-  filter(`Drug Type` %in% c("Marijuana", "Cocaine", "Methamphetamine", "Heroin"))
-
-#ggplot(seattle_selected_drugs) +
-#  geom_bar(aes(`Drug Type`)) +
-#  labs(title = "Seattle") +
-#  theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1))
-
-#ggplot(SF_selected_drugs) +
-#  geom_bar(aes(`Drug Type`)) +
-#  labs(title = "San Francisco") +
-#  theme(axis.text.x = element_text(angle = 75, hjust = 1, vjust = 1))
-
-joined_drug_counts <- (seattle_selected_drugs %>% count(Year, `Drug Type`)) %>%
-  left_join((SF_selected_drugs %>% count(Year, `Drug Type`)), by = c("Year", "Drug Type"))
-  
-joined_drug_counts <- joined_drug_counts %>%
-  rename(Seattle = n.x, `San Francisco` = n.y) %>%
-  gather(Seattle, `San Francisco`, key = City, value = count)
-  
-plt <- ggplot(joined_drug_counts) + geom_col(aes(x = Year, y = count, fill = City, color = `Drug Type`), 
-                                      position = "dodge")
-
-ggplotly(plt) %>% layout(margin = list(b = 50, l = 60, r = 10, t = 80))
 
 
 ```
@@ -304,7 +271,7 @@ grid.arrange(plt_seattle_all_13_17, plt_SF_all_13_17,
              layout_matrix = rbind(c(1, 2),
                                    c(4, 3),
                                    c(4, NA)),
-             heights = c(5, 5, 1))
+             heights = c(4, 6, .7))
              
 ```
 
