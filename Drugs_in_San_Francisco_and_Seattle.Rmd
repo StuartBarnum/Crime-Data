@@ -79,9 +79,9 @@ seattle_complete %>%
 
 ```
 
-San Francisco has not seen such a sharp increase in the number of recorded incidents. Furthermore, there is no evidence of the massive crime wave in Seattle that this data would suggest if the increase were taken to reflect the actual increase in crime. For example, note that the graph shows an increase in recorded instances of drug crime, from 2016 to 2017, of more than 100 percent. However, although there are credible reports of recent increases in use of some drugs, particularly heroin (see http://adai.uw.edu/pubs/pdf/2016drugusetrends.pdf), none of the reports indicate an increase approaching 100 percent.
+San Francisco has not seen such a sharp increase in the number of recorded incidents. Furthermore, there is no evidence of the massive crime wave in Seattle that this data would suggest if the increase were taken to reflect the actual increase in crime. For example, note that the graph shows an increase in recorded instances of drug crime, from 2016 to 2017, of more than 100 percent. However, although there are credible reports of recent increases in use of some drugs, particularly heroin (see http://adai.uw.edu/pubs/pdf/2016drugusetrends.pdf), none of the reports indicates an increase  approaching anything close to 100 percent.
 
-Looking somewhat deeper at the recorded cases of illegal drug use in the two cities, consider the differences between crimes that would be considered trafficking (sales, transportation, or production) and those that would be considered possession.
+Looking somewhat deeper at the recorded cases of illegal drug use in the two cities, consider the differences between crimes that would be considered trafficking (sales, transportation, and, in my schema, production) and those that would be considered possession.
 
 
 ```{r, fig.height = 5, fig.width = 10}
@@ -266,7 +266,7 @@ grid.arrange(plt_seattle_all_13_17, plt_SF_all_13_17,
              
 ```
 
-This final graphic shows a sharp increase in recorded cases of crime in Seattle during 2016, of roughly 200 percent in a period of four months in the late summer and fall of 2016. The sharpness of this increase, which would not have corresponded to a similarly sharp increase in crime, likely corresponds to a change either in policing patterns or in systems for recording crime. We must thus, again, treat any apparent increase in Seattle drug-related crime during this time with great care. However, it is striking that, during this time, the recorded cases of marijuana use did not increase significantly. If we assume, plausibly, that marijuana use did not decrease in Seattle during this period, we may infer the the emphasis by the Seattle police on the enforcement of marijuana laws actually decreased.
+This final graphic shows a sharp increase in recorded cases of crime in Seattle during 2016, of roughly 200 percent in a period of four months in the late summer and fall. The sharpness of this increase, which would not have corresponded to a similarly sharp increase in crime, likely corresponds to a change either in policing patterns or in systems for recording crime. We must thus, again, treat any apparent increase in drug-related crime in Seattle during this period with great care. However, it is striking that, during this four-month period, the number of recorded cases of marijuana crime did not increase significantly. If we assume, plausibly, that marijuana crime in Seattle did not decrease substantially in this period, we may infer that the emphasis by the Seattle police on the enforcement of marijuana laws actually decreased during this period.
 
 The trend in San Francisco is very different. Here we see a rather steady rate of recorded cases of crime involving heroin, whereas the crime related to the other three popular drugs---cocaine, marijuana, and methamphetamine---show steady rates of decrease.
 
