@@ -1,7 +1,7 @@
 ---
 title: 'Drugs and the Police: San Francisco and Seattle'
 author: "Stuart Barnum"
-date: "2/12/2018"
+date: "`r Sys.Date()`"
 output:
   html_document:
     df_print: paged
@@ -9,25 +9,31 @@ editor_options:
   chunk_output_type: inline
 ---
 
-Examining the 2014 Seattle and San Francisco summer crime data, as reported by the police, I noticed that San Francisco, despite having a population of less than 30 percent greater than the population of Seattle, had more than twice as many recorded cases of drug crime. Does this reflect a greater rate of use of certain drugs in San Francisco than in Seattle, or, rather, perhaps a difference in the manner of enforcement of drug laws or the manner in which reported infractions are recorded? Digging somewhat deeper---examining the data from 2013 through 2017 and on the use of certain popular drugs---I uncovered some striking trends and obtained some possible insight into these questions.
+Examining the 2014 Seattle and San Francisco summer crime data, as reported by the police, I noticed that San Francisco, despite having a population less than 30 percent greater than the population of Seattle, had more than twice as many recorded cases of drug crime. Does this reflect a greater rate of use of certain drugs in San Francisco than in Seattle, or, rather, perhaps a difference in the manner of enforcement of drug laws or the manner in which reported infractions are recorded? Digging somewhat deeper---examining the data from 2013 through 2017 and on the use of certain popular drugs---I uncovered some striking trends and obtained some possible insight into these questions.
 
 Examining the Seattle crime data from 2013 through 2017, one of the first things I noticed was a dramatic increase in the number of incidences of crime reflected in the police data. As the following plot of incidences of crime within some selected categories shows, the fractional increase in incidences of crime in the data is roughly the same across the various categories of crime.
 
-```{r}
-library(tidyverse)
-library(plotly)
-library(lubridate)
+The San Francisco dataset was downloaded on 2/7/2018, at:
+`https://data.sfgov.org/Public-Safety/Police-Department-Incidents-Current-Year-2017-/9v2m-8wqu`
+
+Seattle dataset was downloaded on 2/7/2018, at: `https://data.seattle.gov/Public-Safety/Seattle-Police-Department-Police-Report-Incident/7ais-f98f/data`
+
+```{r,}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
 
 ```{r, cache = TRUE}
 SF_complete <- read_csv("SF_Complete.csv")
-seattle_complete <- read_csv("seattle_complete.csv", guess_max = 100000)
+
 #With guess max large enough, columns that contain integers that exceed the 
 #32-bit maximum are read as character vectors.
+seattle_complete <- read_csv("seattle_complete.csv", guess_max = 100000)
 
 ```
 
 ```{r}
+library(tidyverse)
+library(lubridate)
 
 SF_complete <- SF_complete %>%
   mutate(Year = as.integer(str_sub(Date, -4, -1))) %>%
@@ -79,7 +85,7 @@ Looking somewhat deeper at the recorded cases of illegal drug use in the two cit
 
 
 ```{r, fig.height = 5, fig.width = 10}
-library(stringr)
+library(plotly)
 
 seattle_drugs_13_17 <- seattle_complete %>%
   filter(Category == "Drugs" & Year %in% c(2013:2017))
