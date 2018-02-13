@@ -11,7 +11,7 @@ editor_options:
 
 Examining the Seattle and San Francisco crime data for the summer of 2014, as reported by the cities, I noticed that San Francisco, despite having a population less than 30 percent greater than the population of Seattle, had more than twice as many recorded cases of drug crime. Does this reflect a greater rate of use of certain drugs in San Francisco than in Seattle, or, rather, perhaps a difference in the manner of enforcement of drug laws or the manner in which reported infractions are recorded? Digging somewhat deeper---examining the data from 2013 through 2017 and on the use of certain popular drugs---I uncovered some striking trends and obtained some possible insight into these questions.
 
-Thus examining the Seattle and San Francisco crime data from 2013 through 2017, one of the first things I noticed was a dramatic increase in the number of recorded incidents of crime. For example, in 2017, the number of reported cases of drug crime in Seattle were, in contrast to the numbers for 2014, greater than the number recorded cases of drug crime in San Francisco. As the following plot of incidents of crime within some selected categories suggests, the fractional increase in recorded incidents of crime in Seattle is roughly the same across the various categories of crime.
+Thus examining the Seattle and San Francisco crime data from 2013 through 2017, one of the first things I noticed was a dramatic increase in the number of recorded incidents of crime. For example, in 2017, the number of recorded cases of drug crime in Seattle were, in contrast to the numbers for 2014, greater than the number recorded cases of drug crime in San Francisco. As the following plot of incidents of crime within some selected categories suggests, the fractional increase in recorded incidents of crime in Seattle is roughly the same across the various categories of crime.
 
 The San Francisco dataset was downloaded on 2/7/2018, at:
 `https://data.sfgov.org/Public-Safety/Police-Department-Incidents-Current-Year-2017-/9v2m-8wqu`
@@ -79,9 +79,9 @@ seattle_complete %>%
 
 ```
 
-San Francisco has seen no such increase in the number of recorded incidents. Furthermore, there is no evidence of the massive crime wave in Seattle that this data would suggest if the increase were taken to reflect the actual increase in crime. For example, there are reports of recent increases of use of some drugs, particularly heroin, but nothing close to the more than 100 percent increase in use, from one year to the next, that the data on drug crime in Seattle might seem to suggest. 
+San Francisco has not seen such a sharp increase in the number of recorded incidents. Furthermore, there is no evidence of the massive crime wave in Seattle that this data would suggest if the increase were taken to reflect the actual increase in crime. For example, although there are reports of recent increases of use of some drugs, particularly heroin (see http://adai.uw.edu/pubs/pdf/2016drugusetrends.pdf), none of the reports indicate increases of use of more than 100 percent increase in use, from one year to the next, that the data on drug crime in Seattle might seem to suggest. 
 
-Looking somewhat deeper at the recorded cases of illegal drug use in the two cities, let's consider the differences between crimes that would be considered trafficking (sales, transportation, or production) and those that would be considered possession.
+Looking somewhat deeper at the recorded cases of illegal drug use in the two cities, consider the differences between crimes that would be considered trafficking (sales, transportation, or production) and those that would be considered possession.
 
 
 ```{r, fig.height = 5, fig.width = 10}
