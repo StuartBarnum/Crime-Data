@@ -9,7 +9,7 @@ editor_options:
   chunk_output_type: inline
 ---
 
-#####Official crime statistics indicate that, over the period from 2013 through 2017, Seattle and San Francisco have displayed  significantly different patterns of both drug-related crime and police involvement, whether by outright enforcement or by other interventions. In particular, although an apparent change in the recording of drug-related police incidents in Seattle makes comparison of patterns between the two cities somewhat complicated, the data suggest that, unlike San Francisco, Seattle may have recently seen a decrease in police involvement with the usage of marijuana, both in comparision to involvement with the usage of other drugs and in absolute terms (actual amount of involvement). In contrast, San Francisco has seen a rather steady decrease in police involvement with the usage of drugs other than heroin, while the police involvement with the usage of heroin has remained more or less steady. 
+#####Official crime statistics indicate that, over the period from 2013 through 2017, Seattle and San Francisco have displayed  significantly different patterns of drug-related crime or police involvement, whether by outright enforcement or by other interventions. In particular, although an apparent change in the recording of police incidents in Seattle makes comparison of patterns between the two cities somewhat complicated, the data suggest that, unlike San Francisco, Seattle may have recently seen a decrease in police involvement with the usage of marijuana, both in comparision to involvement with the usage of other drugs and in absolute terms (actual amount of involvement). In contrast, San Francisco has seen a rather steady decrease in police involvement with the usage of drugs other than heroin, while the police involvement with the usage of heroin has remained more or less steady. 
 
 <br>
 
@@ -20,7 +20,7 @@ The San Francisco dataset was downloaded on 2/7/2018, at:
 
 Seattle dataset was downloaded on 2/7/2018, at: `https://data.seattle.gov/Public-Safety/Seattle-Police-Department-Police-Report-Incident/7ais-f98f/data`
 
-Thus examining the Seattle and San Francisco crime data from 2013 through 2017, one of the first things I noticed was a dramatic increase in the number of recorded incidents of crime in Seattle. For example, in 2017, the number of recorded cases of drug crime in Seattle were, in contrast to the numbers for 2014, greater than the number of recorded cases of drug crime in San Francisco. As the following plot of incidents of crime within some selected categories suggests, the fractional increase in recorded incidents of crime in Seattle is roughly the same across the various major categories.
+Thus examining the Seattle and San Francisco crime data from 2013 through 2017, one of the first things I noticed was a dramatic increase in the number of recorded incidents of all crime in Seattle. For example, in 2017, the number of recorded cases of drug crime in Seattle was, in contrast to the numbers for 2014, greater than the number of recorded cases of drug crime in San Francisco. As the following plot of incidents of crime within some selected categories suggests, the fractional increase in recorded incidents of crime in Seattle is roughly the same across the various major categories.
 
 ```{r,}
 knitr::opts_chunk$set(warning = FALSE, message = FALSE)
