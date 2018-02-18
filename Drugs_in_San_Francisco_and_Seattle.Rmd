@@ -127,6 +127,7 @@ seattle_drugs_13_17 <- seattle_drugs_13_17 %>%
               "Other"))))))))
   
 
+#combine some relevant data from the two tables and then manipulate it, into a "tidy" form for ggplot
 joined_counts <- (seattle_drugs_13_17 %>% count(Year, `Drug Offense Type`)) %>%
   left_join((SF_drugs_13_17 %>% count(Year, `Drug Offense Type`)), by = c("Year", "Drug Offense Type")) %>%
   gather(n.x, n.y, key = City, value = Incidents) %>%
