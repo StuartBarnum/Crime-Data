@@ -1,7 +1,7 @@
 library(tidyverse)
 
 sanfrancisco <- read.csv("sanfrancisco_incidents_summer_2014.csv")
-seattle <- read.csv("seattle_incidents_summer_2014.csv")
+#seattle <- read.csv("seattle_incidents_summer_2014.csv")
 
 dist_by_PdD_Wk <- sanfrancisco %>% 
   #filter(Category == "DRUG/NARCOTIC") %>%
@@ -71,8 +71,30 @@ ggmap(sf_gg, darken = c(.01, "black")) +
 
 levels(sanfrancisco$Category)
 
+library(plotly)
+g <- list(
+  scope = 'usa',
+  projection = list(type = 'albers usa'),
+  showland = TRUE,
+  landcolor = toRGB("gray95"),
+  subunitcolor = toRGB("gray85"),
+  countrycolor = toRGB("gray85"),
+  countrywidth = 0.5,
+  subunitwidth = 0.5
+)
 
+p <- plot_geo(sanfrancisco, lat = ~Y, lon = ~X) %>%
+  layout(geo = g)
 
+%>%
+  add_markers(
+    text = ~paste(airport, city, state, paste("Arrivals:", cnt), sep = "<br />"),
+    color = ~cnt, symbol = I("square"), size = I(8), hoverinfo = "text"
+  ) %>%
+  colorbar(title = "Incoming flights<br />February 2011") %>%
+  layout(
+    title = 'Most trafficked US airports<br />(Hover for airport)', geo = g
+  )
 
 
 
