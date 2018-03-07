@@ -1,0 +1,280 @@
+---
+title: 'Drugs and the Police: San Francisco and Seattle'
+author: "Stuart Barnum"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    df_print: paged
+editor_options:
+  chunk_output_type: inline
+---
+
+#####Official crime statistics indicate that, over the period from 2013 through 2017, Seattle and San Francisco have displayed  significantly different patterns of drug-related crime or police involvement, whether by outright enforcement or by other interventions. In particular, although an apparent change in the recording of police incidents in Seattle makes comparison of patterns between the two cities somewhat complicated, the data suggest that, unlike San Francisco, Seattle may have recently seen a decrease in police involvement with the usage of marijuana, both in comparision to involvement with the usage of other drugs and in absolute terms (actual amount of involvement). In contrast, San Francisco has seen a rather steady decrease in police involvement with the usage of drugs other than heroin, while the police involvement with the usage of heroin has remained more or less steady. 
+
+<br>
+
+Examining the Seattle and San Francisco crime data for the summer of 2014, as reported by the cities, I noticed that San Francisco, despite having a population less than 30 percent greater than the population of Seattle, had more than twice as many recorded cases of drug crime. Such a difference could reflect various things: (1) a greater rate of use of certain drugs in San Francisco than in Seattle, (2) a difference between the two cities in the manner of enforcement of drug laws (3) a difference in the manner in which drug infractions are recorded, or (4), the fact that recreational use of marijuana was legal in Washington state but not in California. In an attempt to arrive at an understanding of this difference, I examined the data from 2013 through 2017, with respect to both the overall crime statistics and the statistics specifically related to certain popular drugs.
+
+The San Francisco dataset was downloaded on 2/7/2018, at:
+`https://data.sfgov.org/Public-Safety/Police-Department-Incidents-Current-Year-2017-/9v2m-8wqu`
+
+Seattle dataset was downloaded on 2/7/2018, at: `https://data.seattle.gov/Public-Safety/Seattle-Police-Department-Police-Report-Incident/7ais-f98f/data`
+
+Thus examining the Seattle and San Francisco crime data from 2013 through 2017, one of the first things I noticed was a dramatic increase in the number of recorded incidents of all crime in Seattle. For example, in 2017, the number of recorded cases of drug crime in Seattle was, in contrast to the numbers for 2014, greater than the number of recorded cases of drug crime in San Francisco. As the following plot of incidents of crime within some selected categories suggests, the fractional increase in recorded incidents of crime in Seattle is roughly the same across the various major categories.
+
+```{r,}
+knitr::opts_chunk$set(warning = FALSE, message = FALSE)
+```
+
+```{r, cache = TRUE}
+
+library(tidyverse)
+SF_complete <- read_csv("SF_Complete.csv")
+
+#With guess max large enough, columns that contain integers that exceed the 
+#32-bit maximum are read as character vectors.
+seattle_complete <- read_csv("seattle_complete.csv", guess_max = 100000)
+
+```
+
+```{r, fig.height = 5, fig.width = 10}
+library(tidyverse)
+library(lubridate)
+
+SF_complete <- SF_complete %>%
+  mutate(Year = as.integer(str_sub(Date, -4, -1))) %>%
+  mutate(Category = fct_recode(Category,
+        "Drugs" = "DRUG/NARCOTIC"))
+
+seattle_complete <- seattle_complete %>%
+  rename(Category = `Summarized Offense Description`) %>%
+  mutate(Category = fct_recode(Category,
+        "Prostitution" = "PROSTITUTION",
+        "Drugs" = "NARCOTICS",
+        "Weapons" = "WEAPON",
+        "Liquor\nlaws" = "LIQUOR VIOLATION",
+        "Assault" = "ASSAULT",
+        "Homicide" = "HOMICIDE",
+        "Robbery" = "ROBBERY",
+        "Vehicle\ntheft" = "VEHICLE THEFT",
+        "Theft\nfrom\nvehicle" = "CAR PROWL"))
+
+seattle_complete <- seattle_complete %>%
+  mutate(R_date = floor_date(mdy_hms(`Occurred Date or Date Range Start`,
+                                     tz = "PST8PDT"), "day"))
+
+SF_complete <- SF_complete %>%
+  mutate(R_date = mdy(Date, tz = "PST8PDT"))
+
+seattle_complete %>%
+  filter(Category %in% 
+        c("Prostitution",
+        "Drugs",
+        "Weapons",
+        "Assault",
+        "Homicide",
+        "Robbery",
+        "Vehicle\ntheft",
+        "Theft\nfrom\nvehicle")) %>%
+  filter(Year %in% 2013:2017) %>%
+  ggplot(aes(x = Category, fill = as.factor(Year))) +
+  geom_bar(position = "dodge") +
+  ggtitle("Recorded Cases of Selected Categories of Crime: Seattle") +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  labs(fill = "Year")
+
+```
+
+San Francisco has not seen such a sharp increase in the number of recorded incidents. Furthermore, there is no evidence of the massive crime wave in Seattle that this data would suggest if the increase were taken to reflect the actual increase in crime. For example, note that the graph shows an increase in recorded instances of drug crime, from 2016 to 2017, of more than 100 percent. However, although there are credible reports of recent increases in use of some drugs, particularly heroin (see http://adai.uw.edu/pubs/pdf/2016drugusetrends.pdf), none of the reports indicate an increase  approaching anything close to 100 percent.
+
+Looking somewhat deeper at the recorded cases of drug crime in the two cities, consider the differences between crimes that might be considered trafficking (sales, transportation, and, in my schema, production) and those that would be considered possession.
+
+
+```{r, fig.height = 5, fig.width = 10}
+library(plotly)
+
+seattle_drugs_13_17 <- seattle_complete %>%
+  filter(Category == "Drugs" & Year %in% c(2013:2017))
+
+SF_drugs_13_17 <- SF_complete %>%
+  mutate(`Cited or Arrested` = (str_detect(Resolution, "ARREST") | 
+                                str_detect(Resolution, "CITED"))) %>%
+  filter(Category == "Drugs" & Year %in% c(2013:2017))
+
+SF_drugs_13_17 <- SF_drugs_13_17 %>% 
+  mutate(`Drug Offense Type` = 
+          ifelse(str_detect(Descript, "LAB APPARATUS"), "Sales, Transportation, or Production",
+              ifelse(str_detect(Descript, "POSSESSION"), "Possession",
+              ifelse(str_detect(Descript, "SALE"), "Sales, Transportation, or Production",
+              ifelse(str_detect(Descript, "TRANSPORT"), "Sales, Transportation, or Production",
+              ifelse(str_detect(Descript, "PLANTING/CULTIVATING MARIJUANA"), 
+                     "Sales, Transportation, or Production",
+              "Other"
+              ))))))
+
+seattle_drugs_13_17 <- seattle_drugs_13_17 %>%
+  mutate(`Drug Offense Type` = 
+          ifelse(str_detect(`Offense Type`, "POSSESS"), "Possession",
+              ifelse(str_detect(`Offense Type`, "FOUND"), "Possession",
+              ifelse(str_detect(`Offense Type`, "DISTRIBUTE"), 
+                     "Sales, Transportation, or Production",
+              ifelse(str_detect(`Offense Type`, "SMUGGLE"), 
+                     "Sales, Transportation, or Production",
+              ifelse(str_detect(`Offense Type`, "PRODUCE"), 
+                     "Sales, Transportation, or Production",
+              ifelse(str_detect(`Offense Type`, "SELL"), 
+                     "Sales, Transportation, or Production",
+              ifelse(str_detect(`Offense Type`, "TRAFFIC"), 
+                     "Sales, Transportation, or Production",
+              "Other"))))))))
+  
+
+#combine some relevant data from the two tables and then manipulate it, into a "tidy" form for ggplot
+joined_counts <- (seattle_drugs_13_17 %>% count(Year, `Drug Offense Type`)) %>%
+  left_join((SF_drugs_13_17 %>% count(Year, `Drug Offense Type`)), by = c("Year", "Drug Offense Type")) %>%
+  gather(n.x, n.y, key = City, value = Incidents) %>%
+  mutate(City = fct_recode(City,
+                           Seattle = "n.x",
+                           `San Francisco` = "n.y"))
+
+#reformat some categories that will appear in the plot
+joined_counts <- joined_counts %>% 
+  mutate(`Drug Offense Type` = as.factor(`Drug Offense Type`)) %>%
+  mutate(`Drug Offense Type` = 
+           fct_recode(`Drug Offense Type`,
+                      " Sales, Transportation,\nor Production" = "Sales, Transportation, or Production",
+                      " Possession" = "Possession"))
+
+plot <- ggplot(joined_counts %>% filter(`Drug Offense Type` != "Other")) +
+  geom_col(aes(x = Year, y = Incidents, fill = City, color = `Drug Offense Type`),
+                        position = "dodge") +
+  theme(legend.title = element_blank()) +
+  labs(x = "year", y = "count",
+       title = "Drug-related Police Incidents: possession versus trafficking")
+
+ggplotly(plot) %>% layout(margin = list(b = 50, l = 60, r = 10, t = 80))
+```
+
+Although the distinction between drug crimes that amount to mere possession and other drug crimes is not precisely the same in the two cities, we can see some general trends in this plot that are not affected by this issue. In particular, unlike the Seattle data, the San Francisco data show a steady decrease in recorded drug-crime incidents, within the categories of both possession and trafficking. The recorded incidents for Seattle show similar fractional decreases from 2013 to 2014. However, as with the data related to other categories of crime, they begin to increase significantly after that. Let's look at the data for particular drugs, and consider it together with the totals for all of the recorded instances of crime.
+
+
+```{r, fig.height = 5, fig.width = 10}
+seattle_drugs_13_17 <- seattle_drugs_13_17 %>%
+  mutate(`Drug Type` = ifelse(str_detect(`Offense Type`, "MARIJU"), "Marijuana",    #yes
+                            ifelse(str_detect(`Offense Type`, "METH"), "Methamphetamine",    #yes
+                            ifelse(str_detect(`Offense Type`, "COCAINE"), "Cocaine",  #yes 
+                            ifelse(str_detect(`Offense Type`, "HEROIN"), "Heroin",  #yes
+                            ifelse(str_detect(`Offense Type`, "PRESCRIPTION"), "Prescription", #?
+                            ifelse(str_detect(`Offense Type`, "PILL/TABLET"), "Pill/Tablet",  #?
+                            ifelse(str_detect(`Offense Type`, "HALLUCINOGEN"), "Hallucinogen",
+                            ifelse(str_detect(`Offense Type`, "SYNTHETIC"), "Synthetic",  #?
+                            ifelse(str_detect(`Offense Type`, "AMPHETAMINE"), "Amphetamine", #yes
+                            ifelse(str_detect(`Offense Type`, "OPIUM"), "Opium", #yes
+                            ifelse(str_detect(`Offense Type`, "PARAPHENALIA"), "Paraphernalia", #yes
+                            "Other")
+                            )))))))))))
+  
+SF_drugs_13_17 <- SF_drugs_13_17 %>%
+  mutate(`Drug Type` = ifelse(str_detect(Descript, "MARIJUANA"), "Marijuana",   #yes
+                            ifelse(str_detect(Descript, "COCAINE"), "Cocaine",
+                            ifelse(str_detect(Descript, "METH-AMPHETAMINE"), "Methamphetamine",
+                            ifelse(str_detect(Descript, "BARBITUATES"), "Barbituates",
+                            ifelse(str_detect(Descript, "CONTROLLED SUBSTANCE"), 
+                                              "Controlled Substance",
+                            ifelse(str_detect(Descript, "HALLUCINOGENIC"), "Hallucinogenic",
+                            ifelse(str_detect(Descript, "AMPHETAMINE"), "Amphetamine", 
+                            ifelse(str_detect(Descript, "METHADONE"), "Methadone",
+                            ifelse(str_detect(Descript, "PARAPHERNALIA"), "Paraphernalia",
+                            ifelse(str_detect(Descript, "OPIATES"), "Opiates",
+                            ifelse(str_detect(Descript, "OPIUM"), "Opium",
+                            ifelse(str_detect(Descript, "HEROIN"), "Heroin",
+                            "Other")
+                            ))))))))))))
+
+
+```
+
+
+
+```{r, fig.height = 9, fig.width = 12}
+
+library(gridExtra)
+
+seattle_selected_drugs <- seattle_drugs_13_17 %>%
+  filter(`Drug Type` %in% c("Marijuana", "Cocaine", "Methamphetamine", "Heroin"))
+
+SF_selected_drugs <- SF_drugs_13_17 %>%
+  filter(`Drug Type` %in% c("Marijuana", "Cocaine", "Methamphetamine", "Heroin"))
+
+number_of_bins <- 78
+
+plt_seattle_selected_drugs <- ggplot(seattle_selected_drugs) + 
+  geom_freqpoly(aes(x = R_date, color = `Drug Type`), bins = number_of_bins) +
+  scale_x_datetime(date_breaks = "4 months", 
+                   limits = c(as.POSIXct("2012/12/31", tz = "PST8PDT"), 
+                              as.POSIXct("2018/01/01", tz = "PST8PDT"))) +
+  theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
+  labs(y = "number per fortnight", x = "",
+       title = "Seattle Police Incidents Related to 4 Popular Drugs",
+       color = "Drug: ") +
+  theme(legend.position = "bottom",
+        plot.title = element_text(size = 14),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10),
+        legend.text = element_text(size = 10),
+        legend.title = element_text(size = 12)) +
+  guides(size = guide_legend(order = 2))
+
+plt_SF_selected_drugs <- ggplot(SF_selected_drugs) +
+  geom_freqpoly(aes(x = R_date, color = `Drug Type`), bins = number_of_bins) +
+  scale_x_datetime(date_breaks = "4 months", 
+                   limits = c(as.POSIXct("2012/12/31", tz = "PST8PDT"), 
+                              as.POSIXct("2018/01/01", tz = "PST8PDT"))) +
+  theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
+  labs(y = "number per fortnight", x = "",
+       title = "San Francisco Police Incidents Related to 4 Popular Drugs") +
+  theme(legend.position = "none",
+        plot.title = element_text(size = 14),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10))
+
+plt_seattle_all_13_17 <- seattle_complete %>% 
+  filter(Year %in% 2013:2017) %>%
+  ggplot(aes(x = R_date)) + geom_freqpoly(bins = number_of_bins) +
+  scale_x_datetime(date_breaks = "4 months", 
+                   limits = c(as.POSIXct("2012/12/31", tz = "PST8PDT"), 
+                              as.POSIXct("2018/01/01", tz = "PST8PDT"))) +
+  theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
+  labs(y = "number per fortnight", x = "",
+       title = "Seattle Police Incidents: 2013 through 2017") +
+  theme(plot.title = element_text(size = 14),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10))
+
+plt_SF_all_13_17 <- SF_complete %>%
+  filter(Year %in% 2013:2017) %>%
+  ggplot(aes(x = R_date)) + geom_freqpoly(bins = number_of_bins) +
+  scale_x_datetime(date_breaks = "4 months", 
+                   limits = c(as.POSIXct("2012/12/31", tz = "PST8PDT"), 
+                              as.POSIXct("2018/01/01", tz = "PST8PDT"))) +
+  theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
+  labs(y = "number per fortnight", x = "",
+       title = "San Francisco Police Incidents: 2013 through 2017") +
+  theme(plot.title = element_text(size = 14),
+        axis.title.y = element_text(size = 12),
+        axis.text.x = element_text(size = 10))
+
+grid.arrange(plt_seattle_all_13_17, plt_SF_all_13_17, 
+             plt_SF_selected_drugs, plt_seattle_selected_drugs,  
+             layout_matrix = rbind(c(1, 2),
+                                   c(4, 3),
+                                   c(4, NA)),
+             heights = c(4, 6, .7))
+             
+```
+
+When considering this final graphic, it is important to remember that recreational use of marijuana has been legal in Seattle since 2013, whereas it was illegal in San Francisco during the entire period from 2013 through 2017. Nevertheless, as indicated in the Seattle data, there were numerous police incidents involving marijuana, designated as involving criminal activity, over the entire period. Furthermore, returning to my initial observation concerning the difference between the number of recorded cases of drug crime in Seattle in the summer of the 2014 and the number for San Francisco during this time, drugs other other than marijuana may have been sufficient to account for this difference. The difference between Seattle and San Francisco may thus not be due to the legalization of marijuana.
+
+Examining the various other aspects of the Seattle data, we see a sharp increase in recorded cases of all crime in Seattle during 2016, of roughly 200 percent in a period of four months in the late summer and fall. The sharpness of this increase, which would not have corresponded to a similarly sharp increase in crime, likely corresponds to a change either in policing patterns or in systems for recording crime and, in my view, most likely the latter. (I doubt that policing patterns would have changed so abruptly.) We must thus, again, treat any apparent increase in drug-related crime in Seattle during this period with great care. However, it is striking that, during this four-month period, the number of recorded cases of marijuana crime did not increase as much as it did for the other drugs. If we assume, plausibly, that marijuana crime in Seattle did not decrease significantly in this period, we may arrive at the rather tentative suggestion that the enforcement of marijuana laws may have decreased somewhat during this period.
+
+The trend in San Francisco is noticeably different. Here we see a rather constant rate of recorded cases of crime involving heroin, whereas the crime related to the other three popular drugs---cocaine, marijuana, and methamphetamine---show steady rates of decrease. These decreases could reflect actual decreases in usage and sales, etc., of the respective drugs, decreases in enforcement of the corresponding drug laws, or both.
