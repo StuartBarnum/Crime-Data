@@ -27,8 +27,9 @@ knitr::opts_chunk$set(warning = FALSE, message = FALSE)
 ```
 
 ```{r, cache = TRUE}
-
 library(tidyverse)
+
+#read the data into R
 SF_complete <- read_csv("SF_Complete.csv")
 
 #With guess max large enough, columns that contain integers that exceed the 
@@ -41,11 +42,13 @@ seattle_complete <- read_csv("seattle_complete.csv", guess_max = 100000)
 library(tidyverse)
 library(lubridate)
 
+#extract the years for the San Francisco data
 SF_complete <- SF_complete %>%
   mutate(Year = as.integer(str_sub(Date, -4, -1))) %>%
   mutate(Category = fct_recode(Category,
         "Drugs" = "DRUG/NARCOTIC"))
 
+#consolidate the crime categories for Seattle, to allow the examination of general trends
 seattle_complete <- seattle_complete %>%
   rename(Category = `Summarized Offense Description`) %>%
   mutate(Category = fct_recode(Category,
@@ -59,10 +62,11 @@ seattle_complete <- seattle_complete %>%
         "Vehicle\ntheft" = "VEHICLE THEFT",
         "Theft\nfrom\nvehicle" = "CAR PROWL"))
 
+#parse the date data for Seattle
 seattle_complete <- seattle_complete %>%
   mutate(R_date = floor_date(mdy_hms(`Occurred Date or Date Range Start`,
                                      tz = "PST8PDT"), "day"))
-
+#parse the data data for San Francisco
 SF_complete <- SF_complete %>%
   mutate(R_date = mdy(Date, tz = "PST8PDT"))
 
@@ -206,15 +210,17 @@ seattle_selected_drugs <- seattle_drugs_13_17 %>%
 SF_selected_drugs <- SF_drugs_13_17 %>%
   filter(`Drug Type` %in% c("Marijuana", "Cocaine", "Methamphetamine", "Heroin"))
 
-number_of_bins <- 78
+#We will bin the data into roughly 30-day periods, for a total of 61 periods over six years. This number will be used in all of the following plots.
+number_of_bins <- 61
 
+#plot for coaine, herion, marijuana, and methamphetimine over five years in Seattle
 plt_seattle_selected_drugs <- ggplot(seattle_selected_drugs) + 
   geom_freqpoly(aes(x = R_date, color = `Drug Type`), bins = number_of_bins) +
   scale_x_datetime(date_breaks = "4 months", 
                    limits = c(as.POSIXct("2012/12/31", tz = "PST8PDT"), 
                               as.POSIXct("2018/01/01", tz = "PST8PDT"))) +
   theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
-  labs(y = "number per fortnight", x = NULL,
+  labs(y = "number per 30 days", x = NULL,
        title = "Seattle Police Incidents Related to 4 Popular Drugs",
        color = "Drug: ") +
   theme(legend.position = "bottom",
@@ -226,11 +232,14 @@ plt_seattle_selected_drugs <- ggplot(seattle_selected_drugs) +
         plot.margin=unit(c(0,0,0,0), "mm")) +
   guides(size = guide_legend(order = 2))
 
+#extract the legend for drug type, which will be shared by two of the plots (reintroduced later with grid.arrange)
 legend <- cowplot::get_legend(plt_seattle_selected_drugs)
 
+#remove the legend from the individual plot
 plt_seattle_selected_drugs <- plt_seattle_selected_drugs + 
   theme(legend.position = "none")
 
+#plot for coaine, herion, marijuana, and methamphetimine over five years in San Francisco
 plt_SF_selected_drugs <- ggplot(SF_selected_drugs) +
   geom_freqpoly(aes(x = R_date, color = `Drug Type`), bins = number_of_bins) +
   scale_x_datetime(date_breaks = "4 months", 
@@ -245,6 +254,7 @@ plt_SF_selected_drugs <- ggplot(SF_selected_drugs) +
         axis.text.x = element_text(size = 11),
         plot.margin=unit(c(0,0,0,0), "mm"))
 
+#plot for all of the police incidents in Seattle over five years
 plt_seattle_all_13_17 <- seattle_complete %>% 
   filter(Year %in% 2013:2017) %>%
   ggplot(aes(x = R_date)) + geom_freqpoly(bins = number_of_bins) +
@@ -252,13 +262,14 @@ plt_seattle_all_13_17 <- seattle_complete %>%
                    limits = c(as.POSIXct("2012/12/31", tz = "PST8PDT"), 
                               as.POSIXct("2018/01/01", tz = "PST8PDT"))) +
   theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
-  labs(y = "number per fortnight", x = NULL,
+  labs(y = "number per 30 days", x = NULL,
        title = "Seattle Police Incidents: 2013 through 2017") +
   theme(plot.title = element_text(size = 14),
         axis.title.y = element_text(size = 13),
         axis.text.x = element_text(size = 11),
         plot.margin=unit(c(5,0,0,0), "mm"))
 
+#plot for all of the police incidents in San Francisco over five years
 plt_SF_all_13_17 <- SF_complete %>%
   filter(Year %in% 2013:2017) %>%
   ggplot(aes(x = R_date)) + geom_freqpoly(bins = number_of_bins) +
@@ -273,12 +284,13 @@ plt_SF_all_13_17 <- SF_complete %>%
         axis.text.x = element_text(size = 11),
         plot.margin=unit(c(5,0,0,0), "mm"))
 
-
+#begin the process of consolidating the four plots into a single figure
 p11 <- ggplot_gtable(ggplot_build(plt_seattle_all_13_17))
 p12 <- ggplot_gtable(ggplot_build(plt_SF_all_13_17))
 p21 <- ggplot_gtable(ggplot_build(plt_seattle_selected_drugs))
 p22 <- ggplot_gtable(ggplot_build(plt_SF_selected_drugs))
 
+#use the following ten steps to ensure that the plots line up appropriately, regardless of the placement of the legend (which could reasonably be included in plt_SF_selected_drugs and placed on the right)
 maxWidth <-  unit.pmax(p11$widths, p12$widths, p21$widths, p22$widths)
 maxHeight <-  unit.pmax(p11$heights, p12$heights, p21$heights, p22$heights)
 
