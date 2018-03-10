@@ -40,13 +40,6 @@ seattle_complete <- read_csv("seattle_complete.csv", guess_max = 100000)
 
 ```{r, fig.height = 5, fig.width = 10}
 library(tidyverse)
-library(lubridate)
-
-#extract the years for the San Francisco data
-SF_complete <- SF_complete %>%
-  mutate(Year = as.integer(str_sub(Date, -4, -1))) %>%
-  mutate(Category = fct_recode(Category,
-        "Drugs" = "DRUG/NARCOTIC"))
 
 #consolidate the crime categories for Seattle, to allow the examination of general trends
 seattle_complete <- seattle_complete %>%
@@ -61,14 +54,6 @@ seattle_complete <- seattle_complete %>%
         "Robbery" = "ROBBERY",
         "Vehicle\ntheft" = "VEHICLE THEFT",
         "Theft\nfrom\nvehicle" = "CAR PROWL"))
-
-#parse the date data for Seattle
-seattle_complete <- seattle_complete %>%
-  mutate(R_date = floor_date(mdy_hms(`Occurred Date or Date Range Start`,
-                                     tz = "PST8PDT"), "day"))
-#parse the data data for San Francisco
-SF_complete <- SF_complete %>%
-  mutate(R_date = mdy(Date, tz = "PST8PDT"))
 
 seattle_complete %>%
   filter(Category %in% 
@@ -96,6 +81,21 @@ Looking somewhat deeper at the recorded cases of drug crime in the two cities, c
 
 ```{r, fig.height = 5, fig.width = 10}
 library(plotly)
+library(lubridate)
+
+#extract the years for the San Francisco data
+SF_complete <- SF_complete %>%
+  mutate(Year = as.integer(str_sub(Date, -4, -1))) %>%
+  mutate(Category = fct_recode(Category,
+        "Drugs" = "DRUG/NARCOTIC"))
+
+#parse the date data for Seattle, which will be used later
+seattle_complete <- seattle_complete %>%
+  mutate(R_date = floor_date(mdy_hms(`Occurred Date or Date Range Start`,
+                                     tz = "PST8PDT"), "day"))
+#parse the data data for San Francisco, which will be used later
+SF_complete <- SF_complete %>%
+  mutate(R_date = mdy(Date, tz = "PST8PDT"))
 
 seattle_drugs_13_17 <- seattle_complete %>%
   filter(Category == "Drugs" & Year %in% c(2013:2017))
@@ -105,6 +105,7 @@ SF_drugs_13_17 <- SF_complete %>%
                                 str_detect(Resolution, "CITED"))) %>%
   filter(Category == "Drugs" & Year %in% c(2013:2017))
 
+#consolidate the offesne categories for our comparision between the two cities
 SF_drugs_13_17 <- SF_drugs_13_17 %>% 
   mutate(`Drug Offense Type` = 
           ifelse(str_detect(Descript, "LAB APPARATUS"), "Sales, Transportation, or Production",
@@ -116,6 +117,7 @@ SF_drugs_13_17 <- SF_drugs_13_17 %>%
               "Other"
               ))))))
 
+#consolidate the offense categories for our comparision between the two cities
 seattle_drugs_13_17 <- seattle_drugs_13_17 %>%
   mutate(`Drug Offense Type` = 
           ifelse(str_detect(`Offense Type`, "POSSESS"), "Possession",
@@ -162,7 +164,9 @@ ggplotly(plot) %>% layout(margin = list(b = 50, l = 60, r = 10, t = 80))
 Although the distinction between drug crimes that amount to mere possession and other drug crimes is not precisely the same in the two cities, we can see some general trends in this plot that are not affected by this issue. In particular, unlike the Seattle data, the San Francisco data show a steady decrease in recorded drug-crime incidents, within the categories of both possession and trafficking. The recorded incidents for Seattle show similar fractional decreases from 2013 to 2014. However, as with the data related to other categories of crime, they begin to increase significantly after that. Let's look at the data for particular drugs, and consider it together with the totals for all of the recorded instances of crime.
 
 
-```{r, fig.height = 5, fig.width = 10}
+```{r}
+
+#map the catories for Seattle into categories that will match those for San Francisco
 seattle_drugs_13_17 <- seattle_drugs_13_17 %>%
   mutate(`Drug Type` = ifelse(str_detect(`Offense Type`, "MARIJU"), "Marijuana",    #yes
                             ifelse(str_detect(`Offense Type`, "METH"), "Methamphetamine",    #yes
@@ -178,6 +182,7 @@ seattle_drugs_13_17 <- seattle_drugs_13_17 %>%
                             "Other")
                             )))))))))))
   
+#map the categories for San Francisco into categries that will match those for Seattle
 SF_drugs_13_17 <- SF_drugs_13_17 %>%
   mutate(`Drug Type` = ifelse(str_detect(Descript, "MARIJUANA"), "Marijuana",   #yes
                             ifelse(str_detect(Descript, "COCAINE"), "Cocaine",
@@ -204,6 +209,7 @@ SF_drugs_13_17 <- SF_drugs_13_17 %>%
 library(grid)
 library(gridExtra)
 
+#restrict the data to that for four popular drugs
 seattle_selected_drugs <- seattle_drugs_13_17 %>%
   filter(`Drug Type` %in% c("Marijuana", "Cocaine", "Methamphetamine", "Heroin"))
 
