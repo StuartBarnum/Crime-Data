@@ -9,7 +9,7 @@ editor_options:
   chunk_output_type: inline
 ---
 
-#####Official crime statistics indicate that, over the period from 2013 through 2017, Seattle and San Francisco have displayed  significantly different patterns of drug-related crime or police involvement, whether by outright enforcement or by other interventions. In particular, although an apparent change in the recording of police incidents in Seattle makes comparison of patterns between the two cities somewhat complicated, the data suggest that, unlike San Francisco, Seattle may have recently seen a decrease in police involvement with the usage of marijuana, both in comparision to involvement with the usage of other drugs and in absolute terms (actual amount of involvement). In contrast, San Francisco has seen a rather steady decrease in police involvement with the usage of drugs other than heroin, while the police involvement with the usage of heroin has remained more or less steady. 
+#####Official crime statistics indicate that, over the period from 2013 through 2017, Seattle and San Francisco have displayed  significantly different patterns of drug-related crime or police involvement, whether by outright enforcement or by other interventions. In particular, although an apparent change in the recording of police incidents in Seattle makes comparison of patterns between the two cities somewhat complicated, the data suggest that, unlike San Francisco, Seattle may have recently seen both a decrease in emphasis by the police on crimes related to marijuana and an increase in emphasis on crimes related to herion and methamphetamine. In contrast, San Francisco has seen a rather steady decrease in police involvement with the usage of drugs other than heroin, while the police involvement with the usage of heroin has remained more or less steady. 
 
 <br>
 
@@ -161,7 +161,7 @@ plot <- ggplot(joined_counts %>% filter(`Drug Offense Type` != "Other")) +
 ggplotly(plot) %>% layout(margin = list(b = 50, l = 60, r = 10, t = 80))
 ```
 
-Although the distinction between drug crimes that amount to mere possession and other drug crimes is not precisely the same in the two cities, we can see some general trends in this plot that are not affected by this issue. In particular, unlike the Seattle data, the San Francisco data show a steady decrease in recorded drug-crime incidents, within the categories of both possession and trafficking. The recorded incidents for Seattle show similar fractional decreases from 2013 to 2014. However, as with the data related to other categories of crime, they begin to increase significantly after that. Let's look at the data for particular drugs, and consider it together with the totals for all of the recorded instances of crime.
+Although the distinction between drug crimes that amount to mere possession and other drug crimes is not precisely the same in the two cities, we can see some general trends in this plot that are not affected by this issue. In particular, unlike the Seattle data, the San Francisco data show a steady decrease in recorded drug-crime incidents, within the categories of both possession and trafficking. The recorded incidents for Seattle show similar fractional decreases from 2013 to 2014. However, as with the data related to other categories of crime, they begin to increase significantly after that. This warrants a closer look at the time data, which we will consider together with the data for particular drugs. Comparison with the overall recorded-cime-incident rates will help provide some perspective.
 
 
 ```{r}
@@ -269,7 +269,7 @@ plt_seattle_all_13_17 <- seattle_complete %>%
                               as.POSIXct("2018/01/01", tz = "PST8PDT"))) +
   theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
   labs(y = "number per 30 days", x = NULL,
-       title = "Seattle Police Incidents: 2013 through 2017") +
+       title = "All Seattle Police Incidents: 2013 through 2017") +
   theme(plot.title = element_text(size = 14),
         axis.title.y = element_text(size = 13),
         axis.text.x = element_text(size = 11),
@@ -284,7 +284,7 @@ plt_SF_all_13_17 <- SF_complete %>%
                               as.POSIXct("2018/01/01", tz = "PST8PDT"))) +
   theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
   labs(y = NULL, x = NULL,
-       title = "San Francisco Police Incidents: 2013 through 2017") +
+       title = "All San Francisco Police Incidents: 2013 through 2017") +
   theme(plot.title = element_text(size = 14),
         axis.title.y = element_text(size = 13),
         axis.text.x = element_text(size = 11),
@@ -320,6 +320,38 @@ grid.arrange(p11, p12, p21, p22, legend,
 
 When considering this final graphic, it is important to remember that recreational use of marijuana has been legal in Seattle since 2013, whereas it was illegal in San Francisco during the entire period from 2013 through 2017. Nevertheless, as indicated in the Seattle data, there were numerous police incidents involving marijuana, designated as involving criminal activity, over the entire period. Furthermore, returning to my initial observation concerning the difference between the number of recorded cases of drug crime in Seattle in the summer of the 2014 and the number for San Francisco during this time, drugs other other than marijuana may have been sufficient to account for this difference. The difference between Seattle and San Francisco may thus not be due to the legalization of marijuana.
 
-Examining the various other aspects of the Seattle data, we see a sharp increase in recorded cases of all crime in Seattle during 2016, of roughly 200 percent in a period of four months in the late summer and fall. The sharpness of this increase, which would not have corresponded to a similarly sharp increase in crime, likely corresponds to a change either in policing patterns or in systems for recording crime and, in my view, most likely the latter. (I doubt that policing patterns would have changed so abruptly.) We must thus, again, treat any apparent increase in drug-related crime in Seattle during this period with great care. However, it is striking that, during this four-month period, the number of recorded cases of marijuana crime did not increase as much as it did for the other drugs. If we assume, plausibly, that marijuana crime in Seattle did not decrease significantly in this period, we may arrive at the rather tentative suggestion that the enforcement of marijuana laws may have decreased somewhat during this period. 
+Examining the various other aspects of the Seattle data, we see a sharp increase in recorded cases of all crime in Seattle during 2016, of roughly 200 percent in a period of four months in the late summer and fall. The sharpness of this increase, which would not have corresponded to a similarly sharp increase in crime, likely corresponds to a change either in policing patterns or in systems for recording crime and, in my view, most likely the latter. (I doubt that policing patterns would have changed so abruptly.) We must thus, again, treat any apparent increase in drug-related crime in Seattle during this period with great care. However, it is striking that, during this four-month period, the number of recorded cases of marijuana crime did not increase as much as it did for the other drugs. If we assume, plausibly, that marijuana crime in Seattle did not decrease significantly in this period, we may arrive at the rather tentative suggestion that the enforcement of marijuana laws may have decreased somewhat during this period. I will return to this point in a moment.
 
 The trend in San Francisco is noticeably different. Here we see a rather constant rate of recorded cases of crime involving heroin, whereas crimes related to the other three popular drugs---cocaine, marijuana, and methamphetamine---show steady rates of decrease. These decreases could reflect actual decreases in usage and sales, etc., of the respective drugs, decreases in enforcement of the corresponding drug laws, or both.
+
+Returning to the Seattle data, we attempt to disentangle the more recent trends in the drugs data from the sharp increases in reported police incidents after May of 2016. The following plot is a frequency polygon, in which the height of each of the the respective lines reflects in the proportion of all incidents of the given type that occurred during the respective 60-day period. The area under each of the curves is thus equal to one.
+
+```{r, fig.height = 6, fig.width = 9}
+
+#add a column to the seattle_complete dataframe to help provide a legend for the following plot
+seattle_complete <- seattle_complete %>% 
+  mutate(`All police incidents` = "All police incidents")
+
+ggplot(data = seattle_selected_drugs) + 
+  geom_freqpoly(aes(x = R_date, y = ..density.., color = `Drug Type`), 
+                bins = 30) +  #two-month periods over five years
+  guides(color = guide_legend(title=NULL)) +
+  geom_freqpoly(data = seattle_complete %>% 
+                  filter(Year %in% 2013:2017),
+                aes(x = R_date, y = ..density.., color = `All police incidents`), bins = 30) + #two-month periods
+  scale_x_datetime(date_breaks = "4 months", 
+                   limits = c(as.POSIXct("2012/12/31", tz = "PST8PDT"), 
+                              as.POSIXct("2018/01/01", tz = "PST8PDT"))) +
+  theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
+  labs(y = "density of incidents over 60-day periods", x = NULL,
+       title = "Relative trends for all Seattle Police Incidents \nand those Related to the 4 Popular Drugs") +
+  theme(legend.position = "right",
+        plot.title = element_text(hjust = 0.5, size = 14),
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        legend.text = element_text(size = 11)) + 
+  guides(size = guide_legend(order = 2)) +
+  scale_color_manual(values = c("black", "red", "blue", "green", "orange"))
+```
+
+We see that, relative to the overall trend in all recorded police incidents, the number of incidents related to heroin and methamphetamine have recently shown sharp increases.  The trend for marijuana, relative, again, to the trend for all of the police incidents, is less clear. However, if the spike in drug-related incidents during the summer of 2017 is dismissed as an anomaly and if the sharp increases in all recorded police incidents in the late summer of 2016 merely reflects a change the recording of police incidents, then the data may reflect a decrease in emphasis by the police on crimes related to marijuana, relative to crimes related to other drugs and perhaps to other, non-drug-related crimes.
