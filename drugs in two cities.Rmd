@@ -197,7 +197,7 @@ SF_drugs_13_17 <- SF_drugs_13_17 %>%
 
 
 ```{r, fig.height = 9, fig.width = 12}
-
+library(grid)
 library(gridExtra)
 
 seattle_selected_drugs <- seattle_drugs_13_17 %>%
@@ -214,16 +214,22 @@ plt_seattle_selected_drugs <- ggplot(seattle_selected_drugs) +
                    limits = c(as.POSIXct("2012/12/31", tz = "PST8PDT"), 
                               as.POSIXct("2018/01/01", tz = "PST8PDT"))) +
   theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
-  labs(y = "number per fortnight", x = "",
+  labs(y = "number per fortnight", x = NULL,
        title = "Seattle Police Incidents Related to 4 Popular Drugs",
        color = "Drug: ") +
   theme(legend.position = "bottom",
         plot.title = element_text(size = 14),
-        axis.title.y = element_text(size = 12),
-        axis.text.x = element_text(size = 10),
-        legend.text = element_text(size = 10),
-        legend.title = element_text(size = 12)) +
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        legend.text = element_text(size = 11),
+        legend.title = element_text(size = 13),
+        plot.margin=unit(c(0,0,0,0), "mm")) +
   guides(size = guide_legend(order = 2))
+
+legend <- cowplot::get_legend(plt_seattle_selected_drugs)
+
+plt_seattle_selected_drugs <- plt_seattle_selected_drugs + 
+  theme(legend.position = "none")
 
 plt_SF_selected_drugs <- ggplot(SF_selected_drugs) +
   geom_freqpoly(aes(x = R_date, color = `Drug Type`), bins = number_of_bins) +
@@ -231,12 +237,13 @@ plt_SF_selected_drugs <- ggplot(SF_selected_drugs) +
                    limits = c(as.POSIXct("2012/12/31", tz = "PST8PDT"), 
                               as.POSIXct("2018/01/01", tz = "PST8PDT"))) +
   theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
-  labs(y = "number per fortnight", x = "",
+  labs(y = NULL, x = NULL,
        title = "San Francisco Police Incidents Related to 4 Popular Drugs") +
   theme(legend.position = "none",
         plot.title = element_text(size = 14),
-        axis.title.y = element_text(size = 12),
-        axis.text.x = element_text(size = 10))
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        plot.margin=unit(c(0,0,0,0), "mm"))
 
 plt_seattle_all_13_17 <- seattle_complete %>% 
   filter(Year %in% 2013:2017) %>%
@@ -245,11 +252,12 @@ plt_seattle_all_13_17 <- seattle_complete %>%
                    limits = c(as.POSIXct("2012/12/31", tz = "PST8PDT"), 
                               as.POSIXct("2018/01/01", tz = "PST8PDT"))) +
   theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
-  labs(y = "number per fortnight", x = "",
+  labs(y = "number per fortnight", x = NULL,
        title = "Seattle Police Incidents: 2013 through 2017") +
   theme(plot.title = element_text(size = 14),
-        axis.title.y = element_text(size = 12),
-        axis.text.x = element_text(size = 10))
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        plot.margin=unit(c(5,0,0,0), "mm"))
 
 plt_SF_all_13_17 <- SF_complete %>%
   filter(Year %in% 2013:2017) %>%
@@ -258,19 +266,38 @@ plt_SF_all_13_17 <- SF_complete %>%
                    limits = c(as.POSIXct("2012/12/31", tz = "PST8PDT"), 
                               as.POSIXct("2018/01/01", tz = "PST8PDT"))) +
   theme(axis.text.x = element_text(angle = 65, hjust = 1, vjust = 1)) +
-  labs(y = "number per fortnight", x = "",
+  labs(y = NULL, x = NULL,
        title = "San Francisco Police Incidents: 2013 through 2017") +
   theme(plot.title = element_text(size = 14),
-        axis.title.y = element_text(size = 12),
-        axis.text.x = element_text(size = 10))
+        axis.title.y = element_text(size = 13),
+        axis.text.x = element_text(size = 11),
+        plot.margin=unit(c(5,0,0,0), "mm"))
 
-grid.arrange(plt_seattle_all_13_17, plt_SF_all_13_17, 
-             plt_SF_selected_drugs, plt_seattle_selected_drugs,  
+
+p11 <- ggplot_gtable(ggplot_build(plt_seattle_all_13_17))
+p12 <- ggplot_gtable(ggplot_build(plt_SF_all_13_17))
+p21 <- ggplot_gtable(ggplot_build(plt_seattle_selected_drugs))
+p22 <- ggplot_gtable(ggplot_build(plt_SF_selected_drugs))
+
+maxWidth <-  unit.pmax(p11$widths, p12$widths, p21$widths, p22$widths)
+maxHeight <-  unit.pmax(p11$heights, p12$heights, p21$heights, p22$heights)
+
+p11$widths <- maxWidth
+p12$widths <- maxWidth
+p21$widths <- maxWidth
+p22$widths <- maxWidth
+
+p11$heights <- maxHeight
+p12$heights <- maxHeight
+p21$heights <- maxHeight
+p22$heights <- maxHeight
+
+grid.arrange(p11, p12, p21, p22, legend,
              layout_matrix = rbind(c(1, 2),
-                                   c(4, 3),
-                                   c(4, NA)),
-             heights = c(4, 6, .7))
-             
+                                   c(3, 4),
+                                   c(5, 5)),
+             heights = c(5, 6, 1))
+
 ```
 
 When considering this final graphic, it is important to remember that recreational use of marijuana has been legal in Seattle since 2013, whereas it was illegal in San Francisco during the entire period from 2013 through 2017. Nevertheless, as indicated in the Seattle data, there were numerous police incidents involving marijuana, designated as involving criminal activity, over the entire period. Furthermore, returning to my initial observation concerning the difference between the number of recorded cases of drug crime in Seattle in the summer of the 2014 and the number for San Francisco during this time, drugs other other than marijuana may have been sufficient to account for this difference. The difference between Seattle and San Francisco may thus not be due to the legalization of marijuana.
