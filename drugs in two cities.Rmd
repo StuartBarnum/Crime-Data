@@ -236,7 +236,8 @@ plt_seattle_selected_drugs <- ggplot(seattle_selected_drugs) +
         legend.text = element_text(size = 11),
         legend.title = element_text(size = 13),
         plot.margin=unit(c(0,0,0,0), "mm")) +
-  guides(size = guide_legend(order = 2))
+  guides(size = guide_legend(order = 2)) +
+  scale_color_manual(values = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF"))
 
 #extract the legend for drug type, which will be shared by two of the plots (reintroduced later with grid.arrange)
 legend <- cowplot::get_legend(plt_seattle_selected_drugs)
@@ -258,7 +259,8 @@ plt_SF_selected_drugs <- ggplot(SF_selected_drugs) +
         plot.title = element_text(size = 14),
         axis.title.y = element_text(size = 13),
         axis.text.x = element_text(size = 11),
-        plot.margin=unit(c(0,0,0,0), "mm"))
+        plot.margin=unit(c(0,0,0,0), "mm")) +
+  scale_color_manual(values = c("#F8766D", "#7CAE00", "#00BFC4", "#C77CFF"))
 
 #plot for all of the police incidents in Seattle over five years
 plt_seattle_all_13_17 <- seattle_complete %>% 
@@ -351,7 +353,7 @@ ggplot(data = seattle_selected_drugs) +
         axis.text.x = element_text(size = 11),
         legend.text = element_text(size = 11)) + 
   guides(size = guide_legend(order = 2)) +
-  scale_color_manual(values = c("black", "red", "blue", "green", "orange"))
+  scale_color_manual(values = c("black", "#F8766D", "#7CAE00", "#00BFC4", "#C77CFF"))
 ```
 
 We see that, relative to the overall trend in all recorded police incidents, the number of incidents related to heroin and methamphetamine have recently shown sharp increases.  The trend for marijuana, relative, again, to the trend for all of the police incidents, is less clear. However, if the spike in drug-related incidents during the summer of 2017 is dismissed as an anomaly and if the sharp increases in all recorded police incidents in the late summer of 2016 merely reflects a change the recording of police incidents, then the data may reflect a decrease in emphasis by the police on crimes related to marijuana, relative to crimes related to other drugs and perhaps to other, non-drug-related crimes.
