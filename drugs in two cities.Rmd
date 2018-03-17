@@ -12,10 +12,10 @@ editor_options:
 
 Examining the Seattle and San Francisco crime data for the summer of 2014, I noticed that San Francisco, despite having a population less than 30 percent greater than the population of Seattle, had more than twice as many recorded cases of drug crime (see [Crime Data Analysis](https://stuartbarnum.github.io/Crime-Data/Crime_Data_Analysis.html)). Such a difference could reflect various things: (1) a greater rate of use of certain drugs in San Francisco than in Seattle, (2) a difference between the two cities in the manner of enforcement of drug laws (3) a difference in the manner in which drug infractions are recorded, or (4), the fact that recreational use of marijuana was legal in Washington state but not in California. In an attempt to arrive at an understanding of this difference, I examined the data from 2013 through 2017, with respect to both the overall crime statistics and the statistics specifically related to certain popular drugs.
 
-The San Francisco dataset was downloaded on 2/7/2018, at
+The San Francisco dataset was downloaded on 2/7/2018 at
 `https://data.sfgov.org/Public-Safety/Police-Department-Incidents-Current-Year-2017-/9v2m-8wqu`
 
-The Seattle dataset was downloaded on 2/7/2018, at `https://data.seattle.gov/Public-Safety/Seattle-Police-Department-Police-Report-Incident/7ais-f98f/data`
+The Seattle dataset was downloaded on 2/7/2018 at `https://data.seattle.gov/Public-Safety/Seattle-Police-Department-Police-Report-Incident/7ais-f98f/data`
 
 Thus examining the Seattle and San Francisco crime data from 2013 through 2017, one of the first things I noticed was a dramatic increase in the number of recorded incidents of all crime in Seattle. For example, in 2017, the number of recorded cases of drug crime in Seattle was, in contrast to the numbers for 2014, greater than the number of recorded cases of drug crime in San Francisco. As the following plot of incidents of crime within some selected categories suggests, the fractional increase in recorded incidents of crime in Seattle is roughly the same across the various major categories.
 
